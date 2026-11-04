@@ -10,6 +10,7 @@ import manualBooks from '../src/manual-library.json' with {type:'json'};
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const ROOT_FILES = new Set(['index.html', 'package.json', 'package-lock.json', 'vite.config.js', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', '.gitignore', '.gitattributes']);
 const ROOT_DIRS = new Set(['.github', 'scripts', 'src', 'tests']);
+const LAUNCH_FILES = new Set(['server.mjs','launch.ps1','stop.ps1','open-enhanced.cmd','stop-enhanced.cmd','LOCAL-LAUNCH.txt','smoke-launch.ps1'].map(name=>'tools/local-launch/'+name));
 const SOURCE_EXTENSIONS = new Set(['.js', '.mjs', '.json', '.html', '.css', '.md', '.yml', '.yaml']);
 const ASSET_EXTENSIONS = new Set(('.stl .obj .3mf .ply .off .dae .fbx .blend .step .stp .iges .igs .gcode .glb .gltf .bin .wasm .pdf .png .jpg .jpeg .webp .gif .avif .svg .ico .bmp .tif .tiff .psd .ai .eps .exr .hdr .mp4 .webm .mov .avi .mp3 .wav .ogg .flac .woff .woff2 .ttf .otf .eot .zip .gz .tgz .tar .bz2 .xz .br .7z .rar .zst .doc .docx .ppt .pptx .xls .xlsx .map').split(' '));
 const PAYLOAD_KEYS = new Set(['vertices', 'positions', 'normals', 'indices', 'faces', 'uvs', 'meshdata', 'geometrydata', 'meshpayload', 'previewmesh', 'triangleindices', 'triangleids', 'membership', 'memberships', 'selectors', 'selector', 'runs']);
@@ -45,7 +46,7 @@ function pathProblems(path, dist = false) {
   if (/(^|\/)(?:\.env(?:\..*)?|\.npmrc|credentials(?:\..*)?|id_rsa|id_ed25519)$/i.test(path) || /\.(?:pem|p12|pfx|key)$/i.test(path)) issues.push('credential file');
   if (dist) {
     if (!manual&&!['index.html', 'version.json', 'LICENSE', 'THIRD_PARTY_NOTICES.md', '.nojekyll'].includes(path) && !/^assets\/[a-zA-Z0-9_.-]+\.(?:js|mjs|css)$/.test(path)) issues.push('unexpected static output path');
-  } else if (!manual&&!ROOT_FILES.has(path) && !(ROOT_DIRS.has(path.split('/')[0]) && SOURCE_EXTENSIONS.has(extension))) issues.push('outside the source release allowlist');
+  } else if (!manual&&!ROOT_FILES.has(path)&&!LAUNCH_FILES.has(path) && !(ROOT_DIRS.has(path.split('/')[0]) && SOURCE_EXTENSIONS.has(extension))) issues.push('outside the source release allowlist');
   return issues;
 }
 

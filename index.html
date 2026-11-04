@@ -121,6 +121,7 @@
 
           <section class="print-area" aria-labelledby="print-heading">
             <div class="print-header"><div class="print-title"><h2 id="print-heading">打印清单</h2><span id="print-summary" class="muted" aria-live="polite">等待配置</span></div><div class="list-controls"><label class="search-field"><span class="visually-hidden">搜索打印零件</span><input id="print-search" type="search" placeholder="查找零件" autocomplete="off"></label><label><span class="visually-hidden">筛选打印状态</span><select id="print-filter"><option value="all">全部状态</option><option value="pending">待打印</option><option value="done">已打印</option></select></label></div></div>
+            <div class="pending-export-toolbar"><button id="export-pending-3mf" class="btn btn-primary" type="button">导出待打印 3MF ↓</button><span class="muted">当前模块 · 自动扣除已打印数量</span></div>
             <div id="print-list" class="print-list" aria-label="当前模块打印零件"></div>
           </section>
         </div>
@@ -170,6 +171,20 @@
   </dialog>
 
   <dialog id="part-dialog" class="part-dialog" aria-labelledby="part-title"><div class="dialog-heading"><div><p class="eyebrow">PART INSPECTION</p><h2 id="part-title">零件预览</h2></div><button id="part-close" class="btn btn-icon" type="button" aria-label="关闭零件预览">×</button></div><canvas id="part-canvas" tabindex="0" aria-label="单个零件三维预览"></canvas><div class="dialog-footer"><p class="muted">确认零件后，再下载到切片软件。</p><button id="part-download" class="btn btn-primary" type="button">下载 STL ↓</button></div></dialog>
+  <dialog id="pending-export-dialog" class="pending-export-dialog" aria-labelledby="pending-export-title">
+    <div class="dialog-heading"><div><p class="eyebrow">PRINT WHAT IS LEFT</p><h2 id="pending-export-title">导出待打印零件</h2></div><button id="pending-export-close" class="btn btn-icon" type="button" aria-label="关闭导出窗口">×</button></div>
+    <div class="dialog-body">
+      <p id="pending-export-scope" class="pending-export-scope"></p>
+      <p id="pending-export-summary" role="status" aria-live="polite"></p>
+      <div id="pending-export-issues" class="pending-export-issues" hidden></div>
+      <ul id="pending-export-warnings" class="pending-export-warnings" hidden></ul>
+      <ul id="pending-export-list" class="pending-export-list" aria-label="待导出的零件与数量"></ul>
+      <p class="muted pending-export-help">导出完整原模型，保留朝向，按剩余份数放入一个通用 3MF。STL 坐标按毫米处理；导入切片软件后请核对尺寸、自动排盘或分盘，并检查朝向与支撑。文件不含打印机配置或 G-code，导出不会改变打印进度。</p>
+      <progress id="pending-export-progress" max="100" value="0" aria-label="3MF 生成进度" hidden></progress>
+      <p id="pending-export-status" class="muted" role="status" aria-live="polite"></p>
+    </div>
+    <div class="dialog-footer"><button id="pending-export-cancel" class="btn btn-outline" type="button">关闭</button><button id="pending-export-start" class="btn btn-primary" type="button">生成并下载 3MF ↓</button></div>
+  </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <noscript><div class="noscript-notice">请启用 JavaScript 以在本地导入和预览 STL 文件。</div></noscript>
 </body>

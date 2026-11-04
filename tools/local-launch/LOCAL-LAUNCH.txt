@@ -1,0 +1,28 @@
+VAULT 本地增强版入口
+
+固定地址：http://127.0.0.1:5187/
+默认只监听本机。模型仍由浏览器选取，本地服务器只读取 dist 程序文件。
+
+安装结构
+模型根目录/
+  打开_VAULT_Print_Studio_增强版.cmd   （复制自 open-enhanced.cmd）
+  停止_VAULT_Print_Studio_增强版.cmd   （复制自 stop-enhanced.cmd）
+  VAULT_Print_Studio_增强版/
+    launch.ps1
+    stop.ps1
+    server.mjs
+    dist/                            （完整生产构建及许可证）
+    .launcher/                       （首次启动创建）
+
+双击打开入口后会自动打开默认浏览器。已运行时复用本目录的服务。
+关闭浏览器不会删除配置和进度；继续使用同一个浏览器与此地址。
+若先前用的是 GitHub 在线版，其浏览器存储属于另一地址。请先在旧版导出进度，
+再在此增强版恢复进度并选择本机模型目录。
+
+停止入口通过随机令牌请求本目录的服务退出，不使用按端口查找并强杀进程。
+端口冲突时显示错误，不更换端口，也不结束其他程序，避免打印记录分散在多个地址。
+需要 Node.js 24 或更新版本；不会在启动时联网安装依赖。
+
+调试：在应用目录运行 powershell -File launch.ps1 -NoBrowser 可只启动服务。
+日志在应用目录 .launcher/server-output.log 与 server-error.log。
+请勿公开分享 .launcher 运行时目录；打包程序时不包含它。

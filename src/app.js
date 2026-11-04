@@ -15,12 +15,14 @@ import './update-ui.css';
 import {LocalManualViewer} from './manual-viewer.js';
 import {STORAGE_KEY,uid,clone,freshState,sanitizeState,setPrinted,downloaded,validateTiers} from './state.js';
 import {patterns,layerConfigs,layerChoices,changePlan,configProblem,unitBOM,printProgress,effectiveProgress,printedState,libraryRows,validateManualPDF,moduleConfig} from './planner.js';
+import {initPendingExport} from './pending-export-ui.js';
 
 const $=id=>document.getElementById(id), byId=new Map(catalog.map(p=>[p.id,p]));
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let state,stateWasRestored=true;try{state=sanitizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)),new Set(byId.keys()));}catch{stateWasRestored=false;state=freshState(defaults('drawer'));}
 let matches=new Map(),report=null,bom=null,selected=null,view='assembled',open=0,explode=0,step=Infinity,playing=null,scene,mainViewer,planViewer,partViewer,selectedLibrary=null,tab='config',soundContext,toastTimer,importBusy=false,renderTicket=0,importedFiles=[],recovery,importGeneration=0,importAbort,batchMode=false,batchSelection=new Set();
 const unit=()=>state.units.find(u=>u.id===state.activeUnit);
+initPendingExport({getUnit:unit,getMatches:()=>matches,catalog,isImporting:()=>importBusy,notify:message=>toast(message)});
 function save(){stateWasRestored=true;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{toast('浏览器存储不可用，请导出进度文件');}}
 function toast(text){$('toast').textContent=text;$('toast').classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>{$('toast').classList.remove('is-visible');$('toast').textContent='';},4500);}
 function sound(kind='click'){if(!state.sound)return;try{soundContext ||= new AudioContext();soundContext.resume();const o=soundContext.createOscillator(),g=soundContext.createGain(),t=soundContext.currentTime,add=kind==='add';o.type='sine';o.frequency.setValueAtTime(add?420:650,t);o.frequency.exponentialRampToValueAtTime(add?820:480,t+(add ? .08 : .045));o.frequency.exponentialRampToValueAtTime(add?520:440,t+(add ? .17 : .065));g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(add ? .022 : .008,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+(add ? .2 : .075));o.connect(g).connect(soundContext.destination);o.start();o.stop(t+(add ? .22 : .09));o.onended=()=>{o.disconnect();g.disconnect();};}catch{}}

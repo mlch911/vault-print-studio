@@ -1,0 +1,13 @@
+.pending-export-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin:0 0 22px}
+.pending-export-dialog{width:min(680px,calc(100vw - 32px));max-height:90vh}
+.pending-export-scope{font-weight:650;color:var(--text,#f2f4f6)}
+.pending-export-list{list-style:none;margin:18px 0;padding:0;max-height:34vh;overflow:auto;border-top:1px solid var(--line,#2d3239)}
+.pending-export-list li{display:flex;gap:24px;justify-content:space-between;padding:11px 2px;border-bottom:1px solid var(--line,#2d3239);font-size:14px}
+.pending-export-list strong{white-space:nowrap;color:var(--accent,#ff8a47)}
+.pending-export-issues{padding:10px 15px;border-left:3px solid #f09362;background:#f0936212}
+.pending-export-issues p{font-size:14px;line-height:1.65;margin:6px 0}
+.pending-export-warnings{padding:12px 12px 12px 30px;color:#ffce8b;line-height:1.7;font-size:13px}
+.pending-export-help{font-size:12px;line-height:1.8}
+#pending-export-progress{width:100%;margin-top:12px}
+#pending-export-status{font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+@media(max-width:650px){.pending-export-toolbar .btn{width:100%}.pending-export-dialog .dialog-footer{flex-wrap:wrap}}
