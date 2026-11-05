@@ -35,6 +35,20 @@ test('same-ID geometry versions coexist while pinned; eviction disposes only rel
   h.run('clearGeometry()');await Promise.resolve();assert.equal(h.run('pins.size'),0);assert.equal(h.run('cache.size'),0);assert.equal(h.run('disposedB'),1);
 });
 
+test('bulk material colors update together while keeping printed shading and unrelated components intact',async()=>{
+  const h=await harness();
+  h.run(`var v=fakeViewer();v.meshes=['done','partial','other'].map(key=>{const mesh=new THREE.Mesh(new THREE.BufferGeometry(),new THREE.MeshStandardMaterial({color:'#ffffff'}));mesh.userData={key,originalColor:new THREE.Color('#ffffff')};return mesh;});
+    v.setPrintedState({done:{done:true},partial:{partial:true}},{ghost:true});
+    v.colorMany(['done','partial'],'#123456');`);
+  assert.equal(h.run("v.meshes[0].userData.originalColor.getHexString()"),'123456');
+  assert.equal(h.run("v.meshes[1].userData.originalColor.getHexString()"),'123456');
+  assert.equal(h.run("v.meshes[2].material.color.getHexString()"),'ffffff');
+  assert.equal(h.run("v.meshes[0].material.color.equals(new THREE.Color('#123456').lerp(new THREE.Color('#82909a'),.85))"),true);
+  assert.equal(h.run("v.meshes[1].material.color.equals(new THREE.Color('#123456').lerp(new THREE.Color('#ff9a40'),.3))"),true);
+  assert.equal(h.run("v.meshes[0].userData.opacityTarget"),.26);assert.equal(h.run('v.canvas.dataset.printedCount'),'1');
+  h.run("v.color('other','#abcdef')");assert.equal(h.run('v.meshes[2].material.color.getHexString()'),'abcdef');
+});
+
 test('adding out-of-frame layers reframes smoothly without rotating the camera or changing model scale',async()=>{
  const h=await harness({reducedMotion:false});
  await h.run(`var v=fakeViewer();var matches=new Map([['same',{file:new Blob([new Uint8Array([1])])}]]);v.controls.update=()=>{v.camera.lookAt(v.controls.target);v.camera.updateMatrixWorld();};v.camera.position.set(200,300,150);v.controls.update();v.setScene({parts:[part]},matches,{fit:false,animate:false})`);
