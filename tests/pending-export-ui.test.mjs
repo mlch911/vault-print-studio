@@ -9,6 +9,7 @@ import {setPrinted} from '../src/state.js';
 import {buildPendingExport} from '../src/pending-export.js';
 import {DEFAULT_PLATE_OPTIONS,normalizePlateOptions} from '../src/print-plates.js';
 import {PRINT_DEVICES} from '../src/print-devices.js';
+import {BAMBU_MATERIALS,bambuPresetReference} from '../src/bambu-presets.js';
 
 function fixture(){
   const unit={id:'current',name:'S3:当前/模块',config:moduleConfig('drawer','S',3,'1F'),progress:{},colors:{}};
@@ -47,7 +48,7 @@ async function harness({unit,matches,deferred=false,honorAbort=true,savedSetting
     jobs.push(job);options.signal.addEventListener('abort',aborted,{once:true});
     if(!deferred)job.resolve();
   });
-  const context=createContext({buildPendingExport,export3MF,catalog,AbortController,DOMException,Blob,DEFAULT_PLATE_OPTIONS,normalizePlateOptions,PRINT_DEVICES,
+  const context=createContext({buildPendingExport,export3MF,catalog,AbortController,DOMException,Blob,DEFAULT_PLATE_OPTIONS,normalizePlateOptions,PRINT_DEVICES,BAMBU_MATERIALS,bambuPresetReference,
     readExportSettings:()=>savedSettings,saveExportSettings:(options,remember)=>{settingsWrites.push({options,remember});return storageWorks;},
     getUnit:()=>unit,getMatches:()=>matches,isImporting:()=>importing,notify:message=>notifications.push(message),
     document:{getElementById:node,createElement:tag=>makeNode(tag),body},
@@ -118,8 +119,9 @@ test('device and size selection restore separately and remembered device dimensi
   assert.equal(ui.node('pending-export-device-field').hidden,false);assert.equal(ui.node('pending-export-bed-field').hidden,true);
   assert.match(ui.node('pending-export-selected-bed').textContent,/180 × 180/);
   ui.node('pending-export-device').value='h2d-single';ui.node('pending-export-device').fire('change');
+  ui.node('pending-export-material').value='pla';ui.node('pending-export-material').fire('change');
   await ui.node('pending-export-start').fire();
-  assert.deepEqual(ui.jobs[0].options.plateOptions,{...DEFAULT_PLATE_OPTIONS,width:325,depth:320,deviceId:'h2d-single'});
+  assert.deepEqual(ui.jobs[0].options.plateOptions,{...DEFAULT_PLATE_OPTIONS,width:325,depth:320,deviceId:'h2d-single',materialId:'pla'});
   assert.equal(ui.settingsWrites[0].remember,true);assert.equal(ui.settingsWrites[0].options.deviceId,'h2d-single');
   ui.node('pending-export-size-mode').value='size';ui.node('pending-export-size-mode').fire('change');
   assert.equal(ui.node('pending-export-device-field').hidden,true);assert.equal(ui.node('pending-export-bed-field').hidden,false);
@@ -127,6 +129,17 @@ test('device and size selection restore separately and remembered device dimensi
   await ui.node('pending-export-start').fire();
   assert.deepEqual(ui.jobs[1].options.plateOptions,{...DEFAULT_PLATE_OPTIONS,width:275,depth:210});
   assert.equal(Object.hasOwn(ui.settingsWrites[1].options,'deviceId'),false);
+});
+
+test('Bambu device export requires a compatible material, restores it and clears it when a nozzle cannot use it',async()=>{
+  const ui=await harness({savedSettings:{...DEFAULT_PLATE_OPTIONS,deviceId:'a1-mini',materialId:'tpu',remember:true}});
+  ui.node('export-pending-3mf').fire();assert.equal(ui.node('pending-export-material').value,'tpu');
+  ui.node('pending-export-nozzle').value='0.2';ui.node('pending-export-nozzle').fire('change');
+  assert.equal(ui.node('pending-export-material').value,'');
+  await ui.node('pending-export-start').fire();assert.equal(ui.jobs.length,0);assert.match(ui.node('pending-export-status').textContent,/耗材/);
+  ui.node('pending-export-material').value='petg';ui.node('pending-export-material').fire('change');
+  await ui.node('pending-export-start').fire();assert.equal(ui.jobs[0].options.plateOptions.materialId,'petg');assert.equal(ui.settingsWrites[0].options.materialId,'petg');
+  assert.match(ui.node('pending-export-preset-info').textContent,/Generic PETG/);
 });
 
 test('cancel aborts an active export, closes dialog and cannot download a late successful result',async()=>{

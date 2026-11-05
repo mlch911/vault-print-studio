@@ -166,6 +166,38 @@ test('Bambu Studio native importer preserves colors, plate assignments and paint
   }finally{await rm(directory,{recursive:true,force:true});}
 });
 
+test('Bambu device selection writes real machine/material presets and survives native import and export',{
+  skip:!process.env.BAMBU_STUDIO_CLI,
+},async()=>{
+  for(const [deviceId,nozzle,materialId,printer,filament] of [
+    ['p1s',0.4,'petg','Bambu Lab P1S 0.4 nozzle','Generic PETG'],
+    ['a1-mini',0.2,'pla','Bambu Lab A1 mini 0.2 nozzle','Generic PLA @BBL A1M 0.2 nozzle'],
+    ['h2d-single',0.4,'pla','Bambu Lab H2D 0.4 nozzle','Generic PLA @BBL H2D'],
+  ]){
+    const options={byColor:true,deviceId,nozzle,materialId},palette=[['#FFFFFF'],['#FF0000']];
+    const result=await create3MF([entry(binary(tetra),2,{copyColors:palette})],{plateOptions:options}),original=await unpack(result);
+    const config=JSON.parse(strFromU8(original.files['Metadata/project_settings.config']));
+    assert.equal(config.printer_settings_id,printer);assert.deepEqual(config.filament_settings_id,[filament,filament]);assert.equal(config.different_settings_to_system.length,4);
+    assert.ok(Object.keys(config).every(key=>!key.toLowerCase().includes('gcode')));
+    const directory=await mkdtemp(join(tmpdir(),'vault-device-'));
+    try{
+      const input=join(directory,'input.3mf'),output=join(directory,'roundtrip.3mf');await writeFile(input,new Uint8Array(await result.blob.arrayBuffer()));
+      const run=spawnSync(process.env.BAMBU_STUDIO_CLI,['--debug','3','--arrange','0','--orient','0','--export-3mf',output,input],{cwd:directory,encoding:'utf8',timeout:60000});
+      assert.equal(run.status,0,run.stdout+'\n'+run.stderr);
+      const files=unzipSync(await readFile(output)),project=JSON.parse(strFromU8(files['Metadata/project_settings.config']));
+      assert.equal(project.printer_settings_id,printer);assert.deepEqual(project.filament_settings_id,[filament,filament]);
+      assert.deepEqual(project.filament_colour,['#FFFFFF','#FF0000']);
+      assert.equal((strFromU8(files['Metadata/model_settings.config']).match(/<plate>/g)||[]).length,2);
+    }finally{await rm(directory,{recursive:true,force:true});}
+  }
+});
+
+test('missing Bambu material selection fails before reading a potentially large model',async()=>{
+  let reads=0;
+  await assert.rejects(create3MF([entry({size:134,slice(){reads++;throw Error('must not read');}})],{plateOptions:{byColor:true,deviceId:'p1s',nozzle:0.4}}),/耗材/);
+  assert.equal(reads,0);
+});
+
 test('translated build copies do not overlap in XY and each rests at z=0; no rotation or scale',async()=>{
   const {model,manifest}=await unpack(await create3MF([entry(binary(moved(tetra,[100,200,-12])),4)]));
   const items=[...model.matchAll(/<item objectid="(\d+)" transform="([^"]+)"/g)].map(m=>m[2].split(' ').map(Number));

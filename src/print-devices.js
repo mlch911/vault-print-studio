@@ -1,5 +1,5 @@
-// Nominal XY print areas only. Selecting a device does not install its machine
-// preset or import its start/end G-code into the exported planning project.
+// XY planning areas. Bambu selections also reference installed system presets;
+// the planning project never embeds machine start/end G-code.
 // Bambu dimensions checked against official specs/Bambu Studio profiles, 2026-11-05.
 // H2C: https://blog.bambulab.com/bambu-lab-h2c-where-multi-material-vortek-system-meets-engineering-precision/
 // H3C: https://blog.bambulab.com/tool-changer-game-changer-bambu-lab-presents-h3c-the-defining-new-generation-of-3d-printers/

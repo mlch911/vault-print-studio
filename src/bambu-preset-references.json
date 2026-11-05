@@ -1,0 +1,1949 @@
+{
+  "source": "https://github.com/bambulab/BambuStudio/tree/master/resources/profiles/BBL",
+  "studioVersion": "02.09.01.70",
+  "manifestSHA256": "186273e2c526cc2afc88e3ea5be465e9db0f042621e86cca50a12f4b8df51605",
+  "devices": {
+    "a1-mini": {
+      "0.2": {
+        "printer": "Bambu Lab A1 mini 0.2 nozzle",
+        "process": "0.10mm Standard @BBL A1M 0.2 nozzle",
+        "model": "Bambu Lab A1 mini",
+        "height": 180,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1M 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1M 0.2 nozzle",
+            "type": "PETG"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab A1 mini 0.4 nozzle",
+        "process": "0.20mm Standard @BBL A1M",
+        "model": "Bambu Lab A1 mini",
+        "height": 180,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1M",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1M",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1M",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab A1 mini 0.6 nozzle",
+        "process": "0.30mm Standard @BBL A1M 0.6 nozzle",
+        "model": "Bambu Lab A1 mini",
+        "height": 180,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1M",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1M",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1M",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab A1 mini 0.8 nozzle",
+        "process": "0.40mm Standard @BBL A1M 0.8 nozzle",
+        "model": "Bambu Lab A1 mini",
+        "height": 180,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1M",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1M",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1M",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "a1": {
+      "0.2": {
+        "printer": "Bambu Lab A1 0.2 nozzle",
+        "process": "0.10mm Standard @BBL A1 0.2 nozzle",
+        "model": "Bambu Lab A1",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL A1 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL A1 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab A1 0.4 nozzle",
+        "process": "0.20mm Standard @BBL A1",
+        "model": "Bambu Lab A1",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL A1",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL A1",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab A1 0.6 nozzle",
+        "process": "0.30mm Standard @BBL A1 0.6 nozzle",
+        "model": "Bambu Lab A1",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL A1",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL A1",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab A1 0.8 nozzle",
+        "process": "0.40mm Standard @BBL A1 0.8 nozzle",
+        "model": "Bambu Lab A1",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A1",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A1",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL A1",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL A1",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A1",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "a2l": {
+      "0.2": {
+        "printer": "Bambu Lab A2L 0.2 nozzle",
+        "process": "0.10mm Standard @BBL A2L 0.2 nozzle",
+        "model": "Bambu Lab A2L",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A2L 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A2L 0.2 nozzle",
+            "type": "PETG"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab A2L 0.4 nozzle",
+        "process": "0.20mm Standard @BBL A2L",
+        "model": "Bambu Lab A2L",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A2L",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A2L",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A2L",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab A2L 0.6 nozzle",
+        "process": "0.30mm Standard @BBL A2L 0.6 nozzle",
+        "model": "Bambu Lab A2L",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A2L",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A2L",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A2L",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab A2L 0.8 nozzle",
+        "process": "0.40mm Standard @BBL A2L 0.8 nozzle",
+        "model": "Bambu Lab A2L",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL A2L",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL A2L",
+            "type": "PETG"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL A2L",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "p1p": {
+      "0.2": {
+        "printer": "Bambu Lab P1P 0.2 nozzle",
+        "process": "0.10mm Standard @BBL P1P 0.2 nozzle",
+        "model": "Bambu Lab P1P",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P1P 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P1P 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P1P 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P1P 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab P1P 0.4 nozzle",
+        "process": "0.20mm Standard @BBL P1P",
+        "model": "Bambu Lab P1P",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P1P",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P1P",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P1P",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P1P",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P1P",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab P1P 0.6 nozzle",
+        "process": "0.30mm Standard @BBL P1P 0.6 nozzle",
+        "model": "Bambu Lab P1P",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P1P",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P1P",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P1P",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P1P",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P1P",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab P1P 0.8 nozzle",
+        "process": "0.40mm Standard @BBL P1P 0.8 nozzle",
+        "model": "Bambu Lab P1P",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P1P",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P1P",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P1P",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P1P",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P1P",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "p1s": {
+      "0.2": {
+        "printer": "Bambu Lab P1S 0.2 nozzle",
+        "process": "0.10mm Standard @BBL X1C 0.2 nozzle",
+        "model": "Bambu Lab P1S",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab P1S 0.4 nozzle",
+        "process": "0.20mm Standard @BBL X1C",
+        "model": "Bambu Lab P1S",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab P1S 0.6 nozzle",
+        "process": "0.30mm Standard @BBL X1C 0.6 nozzle",
+        "model": "Bambu Lab P1S",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab P1S 0.8 nozzle",
+        "process": "0.40mm Standard @BBL X1C 0.8 nozzle",
+        "model": "Bambu Lab P1S",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "p2s": {
+      "0.2": {
+        "printer": "Bambu Lab P2S 0.2 nozzle",
+        "process": "0.10mm Standard @BBL P2S 0.2 nozzle",
+        "model": "Bambu Lab P2S",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P2S 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P2S 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P2S 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P2S 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab P2S 0.4 nozzle",
+        "process": "0.20mm Standard @BBL P2S",
+        "model": "Bambu Lab P2S",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P2S",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P2S",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P2S",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab P2S 0.6 nozzle",
+        "process": "0.30mm Standard @BBL P2S 0.6 nozzle",
+        "model": "Bambu Lab P2S",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P2S",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P2S",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P2S",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab P2S 0.8 nozzle",
+        "process": "0.40mm Standard @BBL P2S 0.8 nozzle",
+        "model": "Bambu Lab P2S",
+        "height": 256,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL P2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL P2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL P2S",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL P2S",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL P2S",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "x1": {
+      "0.2": {
+        "printer": "Bambu Lab X1 0.2 nozzle",
+        "process": "0.10mm Standard @BBL X1C 0.2 nozzle",
+        "model": "Bambu Lab X1",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab X1 0.4 nozzle",
+        "process": "0.20mm Standard @BBL X1C",
+        "model": "Bambu Lab X1",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab X1 0.6 nozzle",
+        "process": "0.30mm Standard @BBL X1 0.6 nozzle",
+        "model": "Bambu Lab X1",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab X1 0.8 nozzle",
+        "process": "0.40mm Standard @BBL X1 0.8 nozzle",
+        "model": "Bambu Lab X1",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "x1-carbon": {
+      "0.2": {
+        "printer": "Bambu Lab X1 Carbon 0.2 nozzle",
+        "process": "0.10mm Standard @BBL X1C 0.2 nozzle",
+        "model": "Bambu Lab X1 Carbon",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab X1 Carbon 0.4 nozzle",
+        "process": "0.20mm Standard @BBL X1C",
+        "model": "Bambu Lab X1 Carbon",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab X1 Carbon 0.6 nozzle",
+        "process": "0.30mm Standard @BBL X1C 0.6 nozzle",
+        "model": "Bambu Lab X1 Carbon",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab X1 Carbon 0.8 nozzle",
+        "process": "0.40mm Standard @BBL X1C 0.8 nozzle",
+        "model": "Bambu Lab X1 Carbon",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "x1e": {
+      "0.2": {
+        "printer": "Bambu Lab X1E 0.2 nozzle",
+        "process": "0.10mm Standard @BBL X1C 0.2 nozzle",
+        "model": "Bambu Lab X1E",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X1E 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X1E 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab X1E 0.4 nozzle",
+        "process": "0.20mm Standard @BBL X1C",
+        "model": "Bambu Lab X1E",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X1E",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X1E",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab X1E 0.6 nozzle",
+        "process": "0.30mm Standard @BBL X1C 0.6 nozzle",
+        "model": "Bambu Lab X1E",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X1E",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X1E",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab X1E 0.8 nozzle",
+        "process": "0.40mm Standard @BBL X1C 0.8 nozzle",
+        "model": "Bambu Lab X1E",
+        "height": 250,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [
+          "0x0",
+          "18x0",
+          "18x28",
+          "0x28"
+        ],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X1E",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X1E",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "x2d": {
+      "0.2": {
+        "printer": "Bambu Lab X2D 0.2 nozzle",
+        "process": "0.10mm Standard @BBL X2D 0.2 nozzle",
+        "model": "Bambu Lab X2D",
+        "height": 261,
+        "extruderTypes": [
+          "Direct Drive",
+          "Bowden"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL X2D 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL X2D 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X2D 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X2D 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab X2D 0.4 nozzle",
+        "process": "0.20mm Standard @BBL X2D",
+        "model": "Bambu Lab X2D",
+        "height": 261,
+        "extruderTypes": [
+          "Direct Drive",
+          "Bowden"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL X2D 0.4 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL X2D 0.4 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X2D 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X2D 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL X2D 0.4 nozzle",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab X2D 0.6 nozzle",
+        "process": "0.30mm Standard @BBL X2D 0.6 nozzle",
+        "model": "Bambu Lab X2D",
+        "height": 261,
+        "extruderTypes": [
+          "Direct Drive",
+          "Bowden"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL X2D",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL X2D",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X2D",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X2D",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL X2D",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab X2D 0.8 nozzle",
+        "process": "0.40mm Standard @BBL X2D 0.8 nozzle",
+        "model": "Bambu Lab X2D",
+        "height": 261,
+        "extruderTypes": [
+          "Direct Drive",
+          "Bowden"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL X2D",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL X2D",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL X2D",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL X2D",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL X2D",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "h2s": {
+      "0.2": {
+        "printer": "Bambu Lab H2S 0.2 nozzle",
+        "process": "0.10mm Standard @BBL H2S 0.2 nozzle",
+        "model": "Bambu Lab H2S",
+        "height": 340,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2S 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2S 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2S 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2S 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab H2S 0.4 nozzle",
+        "process": "0.20mm Standard @BBL H2S",
+        "model": "Bambu Lab H2S",
+        "height": 340,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2S 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2S 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2S",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab H2S 0.6 nozzle",
+        "process": "0.30mm Standard @BBL H2S 0.6 nozzle",
+        "model": "Bambu Lab H2S",
+        "height": 340,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2S 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2S 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2S",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab H2S 0.8 nozzle",
+        "process": "0.40mm Standard @BBL H2S 0.8 nozzle",
+        "model": "Bambu Lab H2S",
+        "height": 340,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2S",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2S",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2S 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2S 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2S",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "h2d-single": {
+      "0.2": {
+        "printer": "Bambu Lab H2D 0.2 nozzle",
+        "process": "0.10mm Standard @BBL H2D 0.2 nozzle",
+        "model": "Bambu Lab H2D",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2D 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2D 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2D 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2D 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab H2D 0.4 nozzle",
+        "process": "0.20mm Standard @BBL H2D",
+        "model": "Bambu Lab H2D",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2D",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2D",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2D",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2D",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2D",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab H2D 0.6 nozzle",
+        "process": "0.30mm Standard @BBL H2D 0.6 nozzle",
+        "model": "Bambu Lab H2D",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2D",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2D",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2D",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2D",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2D",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab H2D 0.8 nozzle",
+        "process": "0.40mm Standard @BBL H2D 0.8 nozzle",
+        "model": "Bambu Lab H2D",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2D",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2D",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2D",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2D",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2D",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "h2d-pro-single": {
+      "0.2": {
+        "printer": "Bambu Lab H2D Pro 0.2 nozzle",
+        "process": "0.10mm Standard @BBL H2DP 0.2 nozzle",
+        "model": "Bambu Lab H2D Pro",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2DP 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2DP 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2DP 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2DP 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab H2D Pro 0.4 nozzle",
+        "process": "0.20mm Standard @BBL H2DP",
+        "model": "Bambu Lab H2D Pro",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2DP",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2DP",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2DP",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2DP",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2DP",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab H2D Pro 0.6 nozzle",
+        "process": "0.30mm Standard @BBL H2DP 0.6 nozzle",
+        "model": "Bambu Lab H2D Pro",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2DP",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2DP",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2DP",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2DP",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2DP",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab H2D Pro 0.8 nozzle",
+        "process": "0.40mm Standard @BBL H2DP 0.8 nozzle",
+        "model": "Bambu Lab H2D Pro",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2DP",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2DP",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2DP",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2DP",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2DP",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "h2c-single": {
+      "0.2": {
+        "printer": "Bambu Lab H2C 0.2 nozzle",
+        "process": "0.10mm Standard @BBL H2C 0.2 nozzle",
+        "model": "Bambu Lab H2C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2C 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2C 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2C 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2C 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab H2C 0.4 nozzle",
+        "process": "0.20mm Standard @BBL H2C",
+        "model": "Bambu Lab H2C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2C 0.4 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2C 0.4 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2C 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2C 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2C 0.4 nozzle",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab H2C 0.6 nozzle",
+        "process": "0.30mm Standard @BBL H2C 0.6 nozzle",
+        "model": "Bambu Lab H2C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2C",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2C",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2C",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2C",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2C",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab H2C 0.8 nozzle",
+        "process": "0.40mm Standard @BBL H2C 0.8 nozzle",
+        "model": "Bambu Lab H2C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive",
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H2C",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H2C",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H2C",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H2C",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H2C",
+            "type": "TPU"
+          }
+        }
+      }
+    },
+    "h3c": {
+      "0.2": {
+        "printer": "Bambu Lab H3C 0.2 nozzle",
+        "process": "0.10mm Standard @BBL H3C 0.2 nozzle",
+        "model": "Bambu Lab H3C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H3C 0.2 nozzle",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H3C 0.2 nozzle",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H3C 0.2 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H3C 0.2 nozzle",
+            "type": "ASA"
+          }
+        }
+      },
+      "0.4": {
+        "printer": "Bambu Lab H3C 0.4 nozzle",
+        "process": "0.20mm Standard @BBL H3C",
+        "model": "Bambu Lab H3C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H3C",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H3C",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H3C 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H3C 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H3C",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.6": {
+        "printer": "Bambu Lab H3C 0.6 nozzle",
+        "process": "0.30mm Standard @BBL H3C 0.6 nozzle",
+        "model": "Bambu Lab H3C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H3C",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H3C",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H3C 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H3C 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H3C 0.6 nozzle",
+            "type": "TPU"
+          }
+        }
+      },
+      "0.8": {
+        "printer": "Bambu Lab H3C 0.8 nozzle",
+        "process": "0.40mm Standard @BBL H3C 0.8 nozzle",
+        "model": "Bambu Lab H3C",
+        "height": 325,
+        "extruderTypes": [
+          "Direct Drive"
+        ],
+        "excludeArea": [],
+        "materials": {
+          "pla": {
+            "name": "Generic PLA @BBL H3C",
+            "type": "PLA"
+          },
+          "petg": {
+            "name": "Generic PETG @BBL H3C",
+            "type": "PETG"
+          },
+          "abs": {
+            "name": "Generic ABS @BBL H3C 0.4 nozzle",
+            "type": "ABS"
+          },
+          "asa": {
+            "name": "Generic ASA @BBL H3C 0.4 nozzle",
+            "type": "ASA"
+          },
+          "tpu": {
+            "name": "Generic TPU @BBL H3C 0.8 nozzle",
+            "type": "TPU"
+          }
+        }
+      }
+    }
+  }
+}

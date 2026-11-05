@@ -3,6 +3,7 @@
 import {Zip,ZipDeflate,strToU8} from 'three/addons/libs/fflate.module.js';
 import {partitionMesh} from './partition-mesh.js';
 import {normalizePlateOptions,arrangeColorPlates,filamentPaint} from './print-plates.js';
+import {createBambuProjectSettings} from './bambu-presets.js';
 
 export const EXPORT_LIMITS=Object.freeze({files:1000,instances:10000,fileBytes:512*1024*1024,totalBytes:2*1024*1024*1024,triangles:10000000,vertices:4000000,zipBytes:512*1024*1024,xmlBytes:3500000000});
 const CORE='http://schemas.microsoft.com/3dmanufacturing/core/2015/02';
@@ -132,6 +133,7 @@ export async function create3MF(entries,{title='VAULT 待打印零件',onProgres
   const palette=[...new Set(entries.flatMap(e=>e.colors||[]))],materialId=entries.length+1;
   if(native&&palette.length>32)throw Error('Bambu Studio 项目最多支持 32 种导出颜色，请减少配色或改用通用 3MF');
   const colorIndices=new Map(palette.map((color,index)=>[color,index]));
+  const projectSettings=native?createBambuProjectSettings(plateSettings,palette):null;
   const chunks=[],budget=createExportBudget();let zipError=null,finished=false,xmlBytes=0;
   const zip=new Zip((error,data,final)=>{
     if(error)zipError=error;
@@ -253,11 +255,7 @@ export async function create3MF(entries,{title='VAULT 待打印零件',onProgres
     }
     write('</build></model>',true);
     if(native){
-      const {width,depth,nozzle}=plateSettings;
-      // These are descriptive placeholders, not claims to inherit an official
-      // printer/material profile. Bambu may show its custom-preset confirmation.
-      const project={version:'02.00.00.00',name:'project_settings',from:'project',printer_technology:'FFF',printer_settings_id:'VAULT 排盘项目（未指定机型）',print_settings_id:'VAULT 排盘（未指定工艺）',filament_settings_id:palette.map(color=>`VAULT ${color}（未指定耗材）`),nozzle_diameter:[String(nozzle)],filament_colour:palette,printable_area:['0x0',`${width}x0`,`${width}x${depth}`,`0x${depth}`],printable_height:'256',flush_volumes_matrix:palette.flatMap((_,i)=>palette.map((_,j)=>i===j?'0':'280'))};
-      addText('Metadata/project_settings.config',JSON.stringify(project));
+      addText('Metadata/project_settings.config',JSON.stringify(projectSettings));
       const meta=(key,value)=>`<metadata key="${key}" value="${xml(value)}"/>`;
       const objects=manifest.objects.map(object=>{
         const extruder=colorIndices.get(object.colors[0])+1;

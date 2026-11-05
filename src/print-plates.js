@@ -1,4 +1,5 @@
 import {PRINT_DEVICES} from './print-devices.js';
+import {BAMBU_MATERIALS,bambuPresetReference} from './bambu-presets.js';
 
 export const DEFAULT_PLATE_OPTIONS=Object.freeze({byColor:true,width:256,depth:256,nozzle:0.4});
 export const PLATE_MARGIN=5,PART_GAP=5,MAX_PLATES=36;
@@ -9,8 +10,9 @@ export function normalizePlateOptions(value={}){
   const device=options.deviceId===undefined?null:PRINT_DEVICES.find(device=>device.id===options.deviceId);
   if(options.deviceId!==undefined&&!device)throw Error('请选择有效的设备型号');
   if(device){options.width=device.width;options.depth=device.depth;}
+  if(options.materialId!==undefined&&!BAMBU_MATERIALS.some(material=>material.id===options.materialId))throw Error('请选择有效的耗材预设');
   if(typeof options.byColor!=='boolean'||![options.width,options.depth].every(n=>Number.isFinite(n)&&n>=50&&n<=1000)||![0.2,0.4,0.6,0.8].includes(options.nozzle))throw Error('请选择有效的热床尺寸（50–1000 mm）和喷嘴直径');
-  return {byColor:options.byColor,width:options.width,depth:options.depth,nozzle:options.nozzle,...(device?{deviceId:device.id}:{})};
+  return {byColor:options.byColor,width:options.width,depth:options.depth,nozzle:options.nozzle,...(device?{deviceId:device.id}:{}),...(options.materialId?{materialId:options.materialId}:{})};
 }
 
 const fits=(w,d,r)=>w<=r.width&&d<=r.depth;
@@ -48,7 +50,7 @@ function splitFreeRectangles(free,used){
   return result.filter((r,i)=>r.width>0&&r.depth>0&&!result.some((other,j)=>j!==i&&contained(r,other)&&(!contained(other,r)||j<i)));
 }
 
-function packRectangles(jobs,width,depth,order,heuristic,limit){
+function packRectangles(jobs,width,depth,order,heuristic,limit,excluded){
   const bins=[];
   for(const job of jobs.slice().sort(order)){
     let best;
@@ -64,7 +66,9 @@ function packRectangles(jobs,width,depth,order,heuristic,limit){
     bins.forEach(search);
     if(!best){
       if(bins.length>=limit)return null;
-      const bin={free:[{x:0,y:0,width:width+PART_GAP,depth:depth+PART_GAP}],items:[]};bins.push(bin);search(bin,bins.length-1);
+      const bin={free:[{x:0,y:0,width:width+PART_GAP,depth:depth+PART_GAP}],items:[]};
+      for(const blocked of excluded)bin.free=splitFreeRectangles(bin.free,blocked);
+      bins.push(bin);search(bin,bins.length-1);
     }
     if(!best)return null;
     const {bin,r,rotation}=best,used={x:r.x,y:r.y,width:best.width,depth:best.depth};
@@ -80,7 +84,14 @@ function layoutScore(bins){
 /** Compare row packing with several MaxRects orders/fit scores. Only rotate
  * around Z by 90 degrees; retain the source's bed-facing surface and geometry. */
 export function arrangeColorPlates(objects,options){
-  const {width,depth}=normalizePlateOptions(options),plates=[],instances=[],groups=new Map();
+  const normalized=normalizePlateOptions(options),{width,depth}=normalized,plates=[],instances=[],groups=new Map();
+  const reference=bambuPresetReference(normalized.deviceId,normalized.nozzle),area=reference?.excludeArea||[],excluded=[];
+  if(area.length){
+    const points=area.map(point=>point.split('x').map(Number));
+    if(points.some(point=>point.length!==2||!point.every(Number.isFinite)))throw Error('设备的不可打印区域数据无效');
+    const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+    excluded.push({x:Math.min(...xs)-2*PLATE_MARGIN,y:Math.min(...ys)-2*PLATE_MARGIN,width:Math.max(...xs)-Math.min(...xs)+2*PLATE_MARGIN,depth:Math.max(...ys)-Math.min(...ys)+2*PLATE_MARGIN});
+  }
   for(const object of objects){
     const colors=[...new Set(object.colors||['#BFC2C4'])].sort(),key=colors.join(',');
     if(!groups.has(key))groups.set(key,{colors,objects:[]});
@@ -88,15 +99,19 @@ export function arrangeColorPlates(objects,options){
   }
   for(const {colors,objects:group} of groups.values()){
     const jobs=[],innerWidth=width-2*PLATE_MARGIN,innerDepth=depth-2*PLATE_MARGIN;
+    let available=[{x:0,y:0,width:innerWidth+PART_GAP,depth:innerDepth+PART_GAP}];
+    for(const blocked of excluded)available=splitFreeRectangles(available,blocked);
     for(const object of group){
       const [min,max]=object.bbox,w=max[0]-min[0],d=max[1]-min[1];
+      if(reference&&max[2]-min[2]>reference.height)throw Error(`${object.name}：超过所选机型 ${reference.height} mm 的打印高度`);
       if(!fits(w,d,{width:innerWidth,depth:innerDepth})&&!fits(d,w,{width:innerWidth,depth:innerDepth}))throw Error(`${object.name}：占地 ${w.toFixed(1)} × ${d.toFixed(1)} mm，平面旋转后仍超过所选热床的可用区域；请选择更大热床或在切片软件中调整朝向`);
+      if(!available.some(r=>fits(w+PART_GAP,d+PART_GAP,r)||fits(d+PART_GAP,w+PART_GAP,r)))throw Error(`${object.name}：无法避开所选机型的不可打印区域，请调整朝向或尺寸`);
       for(let copy=1;copy<=object.quantity;copy++)jobs.push({object,copy,width:w,depth:d});
     }
     const orders=[(a,b)=>b.width*b.depth-a.width*a.depth,(a,b)=>Math.max(b.width,b.depth)-Math.max(a.width,a.depth),(a,b)=>b.depth-a.depth||b.width-a.width,(a,b)=>b.width-a.width||b.depth-a.depth];
-    let best=packRows(jobs,innerWidth,innerDepth);
+    let best=excluded.length?null:packRows(jobs,innerWidth,innerDepth);
     for(const order of orders)for(const heuristic of ['short','area']){
-      const candidate=packRectangles(jobs,innerWidth,innerDepth,order,heuristic,Math.min(best?.length??MAX_PLATES,MAX_PLATES));
+      const candidate=packRectangles(jobs,innerWidth,innerDepth,order,heuristic,Math.min(best?.length??MAX_PLATES,MAX_PLATES),excluded);
       if(candidate&&(!best||compare(layoutScore(candidate),layoutScore(best))<0))best=candidate;
     }
     if(!best||plates.length+best.length>MAX_PLATES)throw Error('分盘超过 Bambu Studio 的 36 盘上限，请按模块分批导出');
