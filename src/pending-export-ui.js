@@ -1,5 +1,8 @@
 import {buildPendingExport} from './pending-export.js';
 import {export3MF} from './three-mf-export.js';
+import {DEFAULT_PLATE_OPTIONS,normalizePlateOptions} from './print-plates.js';
+import {readExportSettings,saveExportSettings} from './export-settings.js';
+import {PRINT_DEVICES} from './print-devices.js';
 import './pending-export.css';
 
 const element=(tag,text)=>{const node=document.createElement(tag);node.textContent=text;return node;};
@@ -9,10 +12,40 @@ export function initPendingExport({getUnit,getMatches,catalog,isImporting=()=>fa
   const $=id=>document.getElementById('pending-export-'+id);
   const dialog=$('dialog'),trigger=document.getElementById('export-pending-3mf');
   let controller=null,busy=false;
+  const presetBeds=['180x180','220x220','256x256','300x300','325x320','350x320','350x350'];
+  const settingIds=['by-color','size-mode','device','bed','width','depth','nozzle','remember'];
+  const deviceGroups=new Map();
+  for(const device of PRINT_DEVICES){
+    if(!deviceGroups.has(device.series)){const group=document.createElement('optgroup');group.label=device.series;deviceGroups.set(device.series,group);}
+    const option=element('option',`${device.name} · ${device.width} × ${device.depth} mm`);option.value=device.id;deviceGroups.get(device.series).append(option);
+  }
+  $('device').replaceChildren(...deviceGroups.values());
+  function showSettings(){
+    const byDevice=$('size-mode').value==='device',device=PRINT_DEVICES.find(device=>device.id===$('device').value);
+    $('plate-fields').hidden=!$('by-color').checked;
+    $('device-field').hidden=!byDevice;$('bed-field').hidden=byDevice;
+    $('custom-bed').hidden=byDevice||$('bed').value!=='custom';
+    $('selected-bed').textContent=byDevice&&device?`用于排盘的热床尺寸：${device.width} × ${device.depth} mm`:'';
+  }
+  function loadSettings(){
+    const saved=readExportSettings(),options=saved||DEFAULT_PLATE_OPTIONS,key=`${options.width}x${options.depth}`;
+    $('by-color').checked=options.byColor;$('bed').value=presetBeds.includes(key)?key:'custom';
+    $('size-mode').value=options.deviceId?'device':'size';$('device').value=options.deviceId||'p1s';
+    $('width').value=String(options.width);$('depth').value=String(options.depth);$('nozzle').value=String(options.nozzle);$('remember').checked=!!saved;
+    showSettings();
+  }
+  function currentSettings(){
+    const custom=$('bed').value==='custom',[width,depth]=custom?[Number($('width').value),Number($('depth').value)]:$('bed').value.split('x').map(Number);
+    const options={byColor:$('by-color').checked,width,depth,nozzle:Number($('nozzle').value)};
+    if($('size-mode').value==='device')options.deviceId=$('device').value;
+    try{return normalizePlateOptions(options);}catch(error){if(!options.byColor)return {...DEFAULT_PLATE_OPTIONS,byColor:false};throw error;}
+  }
+  for(const id of ['by-color','bed','size-mode','device'])$(id).addEventListener('change',showSettings);
   function setBusy(value){
     busy=value;trigger.disabled=value;$('start').disabled=value;$('cancel').textContent=value?'取消生成':'关闭';
     $('close').setAttribute('aria-label',value?'取消生成并关闭':'关闭导出窗口');
     $('progress').hidden=!value;dialog.setAttribute('aria-busy',String(value));
+    for(const id of settingIds)$(id).disabled=value;
   }
   function preview(){
     const current=getUnit();
@@ -35,6 +68,7 @@ export function initPendingExport({getUnit,getMatches,catalog,isImporting=()=>fa
     if(busy)return;
     if(isImporting()){notify('模型正在导入，请稍后导出');return;}
     $('status').textContent='';$('progress').value=0;
+    loadSettings();
     if(preview())dialog.showModal();
   });
   function close(){if(busy)controller?.abort();dialog.close();}
@@ -44,11 +78,14 @@ export function initPendingExport({getUnit,getMatches,catalog,isImporting=()=>fa
   $('start').addEventListener('click',async()=>{
     if(busy||isImporting())return;
     const snapshot=preview();if(!snapshot?.selection.canExport)return;
+    let plateOptions;
+    try{plateOptions=currentSettings();}catch(error){$('status').textContent=error.message;return;}
+    if(!saveExportSettings(plateOptions,$('remember').checked)&&$('remember').checked)notify('浏览器未能保存导出设置，本次仍可继续导出');
     const abort=new AbortController();controller=abort;setBusy(true);
     $('progress').value=0;$('status').textContent='正在读取完整原始模型…';
     try{
       const {blob,manifest}=await export3MF(snapshot.selection.entries,{
-        title:snapshot.name+' · 待打印零件',signal:abort.signal,
+        title:snapshot.name+' · 待打印零件',signal:abort.signal,plateOptions,
         onProgress:progress=>{
           if(abort.signal.aborted)return;
           $('progress').value=Math.max(0,Math.min(100,progress.percent||0));
@@ -60,7 +97,7 @@ export function initPendingExport({getUnit,getMatches,catalog,isImporting=()=>fa
       link.href=url;link.download=`VAULT_${safeName(snapshot.name)}_待打印.3mf`;
       document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),120000);
       const cleaned=manifest?.discardedDegenerateTriangles||0;
-      $('status').textContent=`已生成并开始下载 ${(blob.size/1024/1024).toFixed(1)} MB 的 3MF。${cleaned?`导出时跳过了 ${cleaned.toLocaleString('zh-CN')} 个重复顶点造成的零面积面，原 STL 未改动。`:''}打印进度保持不变；请在切片软件中排盘。`;
+      $('status').textContent=`已生成并开始下载 ${(blob.size/1024/1024).toFixed(1)} MB 的 3MF。${manifest?.plates?`已按颜色分为 ${manifest.plates.length} 盘（${plateOptions.width} × ${plateOptions.depth} mm）。`:''}${cleaned?`导出时跳过了 ${cleaned.toLocaleString('zh-CN')} 个重复顶点造成的零面积面，原 STL 未改动。`:''}打印进度保持不变；请在切片软件中核对打印设置。`;
       notify('待打印 3MF 已生成，打印进度未改变');
     }catch(error){
       $('status').textContent=error.name==='AbortError'?'已取消生成，打印进度保持不变。':'生成失败：'+error.message;

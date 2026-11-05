@@ -4,6 +4,10 @@ import {createHash} from 'node:crypto';
 import {unzipSync,strFromU8} from 'three/addons/libs/fflate.module.js';
 import {create3MF,export3MF,validateExportEntries} from '../src/three-mf-export.js';
 import {decimal,EXPORT_LIMITS,createExportBudget} from '../src/three-mf-core.js';
+import {mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {spawnSync} from 'node:child_process';
 
 // Entirely procedural synthetic tetrahedron; no captured model payload.
 const axisLengths=[3,2,4];
@@ -33,7 +37,7 @@ async function unpack(result){
 function meshes(xml){
   return [...xml.matchAll(/<object\b[^>]*id="(\d+)"[^>]*>([\s\S]*?)<\/object>/g)].map(match=>({
     id:Number(match[1]),vertices:Array.from(match[2].matchAll(/<vertex x="([^"]+)" y="([^"]+)" z="([^"]+)"\/>/g),v=>v.slice(1).map(Number)),
-    triangles:Array.from(match[2].matchAll(/<triangle v1="(\d+)" v2="(\d+)" v3="(\d+)"\/>/g),v=>v.slice(1).map(Number)),
+    triangles:Array.from(match[2].matchAll(/<triangle v1="(\d+)" v2="(\d+)" v3="(\d+)"[^>]*\/>/g),v=>v.slice(1).map(Number)),
   }));
 }
 
@@ -60,6 +64,106 @@ test('3MF package contains complete indexed meshes, OPC relationships, instance 
   assert.deepEqual(await Promise.all([hash(first),hash(second)]),before,'source bytes remain untouched');
   assert.equal(progress.at(-1).phase,'complete');assert.equal(progress.at(-1).percent,100);
   assert.deepEqual(manifest,result.manifest);
+});
+
+test('colors survive validation twice, worker transfer and 3MF material bindings; equal-color copies share geometry',async()=>{
+  const source=entry(binary(tetra),3,{copyColors:[['#ff6b24'],['#376680'],['#FF6B24']]});
+  let payload;
+  const originalWorker=globalThis.Worker;
+  globalThis.Worker=class{
+    postMessage(data){payload=structuredClone(data);create3MF(payload.entries,{plateOptions:payload.plateOptions}).then(result=>this.onmessage({data:{type:'result',...result}}));}
+    terminate(){}
+  };
+  let result,nativeResult;
+  const plateOptions={byColor:true,width:180,depth:180,nozzle:0.4};
+  try{result=await export3MF([source]);nativeResult=await export3MF([source],{plateOptions});}finally{if(originalWorker===undefined)delete globalThis.Worker;else globalThis.Worker=originalWorker;}
+  assert.deepEqual(payload.plateOptions,plateOptions);assert.equal(nativeResult.manifest.plates.length,2);
+  assert.deepEqual(payload.entries[0].copyColors,[['#FF6B24'],['#376680'],['#FF6B24']]);
+  const {model,manifest}=await unpack(result);
+  assert.match(model,/xmlns:m="http:\/\/schemas.microsoft.com\/3dmanufacturing\/material\/2015\/02"/);
+  assert.match(model,/<m:colorgroup id="3"><m:color color="#FF6B24FF"\/><m:color color="#376680FF"\/><\/m:colorgroup>/);
+  const objects=[...model.matchAll(/<object\b([^>]+)>([\s\S]*?)<\/object>/g)];
+  assert.equal(objects.length,2);
+  objects.forEach((object,index)=>{
+    assert.match(object[1],new RegExp(`pid="3" pindex="${index}"`));
+    const faces=[...object[2].matchAll(/<triangle[^>]+pid="3" p1="(\d+)" p2="(\d+)" p3="(\d+)"/g)];
+    assert.equal(faces.length,4);faces.forEach(f=>assert.deepEqual(f.slice(1),Array(3).fill(String(index))));
+  });
+  assert.deepEqual(manifest.objects.map(o=>o.quantity),[2,1]);
+  assert.equal(manifest.totalQuantity,3);
+  for(const mesh of meshes(model))assert.deepEqual(mesh.triangles.map(face=>face.map(v=>mesh.vertices[v])),tetra);
+});
+
+test('a paired STL retains its original complete mesh and binds each component color to its original faces',async()=>{
+  const shifted=moved(tetra,[20,0,0]),pair=tetra.flatMap((face,i)=>[face,shifted[i]]),file=binary(pair),before=await hash(file);
+  const frames=[0,20].map(x=>({rotation:Array.from({length:3},(_,i)=>Array.from({length:3},(_,j)=>Number(i===j))),origin:[x+1.5,1,2],min:[-1.5,-1,-2],max:[1.5,1,2]}));
+  const {model,manifest}=await unpack(await create3MF([entry(file,1,{copyColors:[['#FF0000','#0000FF']],colorFrames:frames})]));
+  const parsed=meshes(model);assert.equal(parsed.length,1);
+  assert.deepEqual(parsed[0].triangles.map(face=>face.map(v=>parsed[0].vertices[v])),pair);
+  assert.deepEqual([...model.matchAll(/<triangle[^>]+p1="(\d+)"/g)].map(m=>Number(m[1])),Array.from({length:8},(_,i)=>i%2));
+  assert.deepEqual(manifest.objects[0].colors,['#FF0000','#0000FF']);
+  assert.equal(await hash(file),before);
+  await assert.rejects(create3MF([entry(file,1,{copyColors:[['#FF0000','#0000FF']],colorFrames:[]})]),/无法可靠匹配/);
+});
+
+test('malformed color assignments cannot silently produce uncolored output',()=>{
+  for(const copyColors of [[],[['red']],[['#000000'],['#FFFFFF']],[[]],[['#FF0000','bad']],[new Array(1)],new Array(1)]){
+    assert.throws(()=>validateExportEntries([entry(binary(tetra),1,{copyColors})]),/配色无效/);
+  }
+});
+
+test('color-separated project includes usable Bambu settings, unique instance references and real plate transforms',async()=>{
+  const result=await create3MF([entry(binary(tetra),3,{copyColors:[['#FF0000'],['#0000FF'],['#FF0000']]})],{plateOptions:{byColor:true,width:180,depth:180,nozzle:0.6}});
+  const {model,manifest,files}=await unpack(result),project=JSON.parse(strFromU8(files['Metadata/project_settings.config'])),settings=strFromU8(files['Metadata/model_settings.config']);
+  assert.match(model,/<metadata name="Application">BambuStudio-02\.00\.00\.00<\/metadata>/);
+  assert.match(model,/<metadata name="Designer">VAULT Print Studio<\/metadata>/);
+  assert.deepEqual(project.nozzle_diameter,['0.6']);assert.deepEqual(project.filament_colour,['#FF0000','#0000FF']);
+  assert.deepEqual(project.printable_area,['0x0','180x0','180x180','0x180']);
+  assert.match(project.printer_settings_id,/未指定机型/);assert.ok(project.filament_settings_id.every(name=>/未指定耗材/.test(name)));
+  assert.ok(Object.keys(project).every(key=>!key.toLowerCase().includes('gcode')));
+  assert.ok(Object.keys(files).every(path=>!/(?:machine|filament|process)_settings_/.test(path)));
+  assert.equal(manifest.plates.length,2);assert.equal(manifest.instances.length,3);
+  assert.equal((settings.match(/<plate>/g)||[]).length,2);assert.equal((settings.match(/<model_instance>/g)||[]).length,3);
+  assert.match(settings,/<metadata key="instance_id" value="1"\/>/);
+  for(const instance of manifest.instances){
+    const plate=manifest.plates.find(p=>p.id===instance.plate),object=manifest.objects.find(o=>o.objectId===instance.objectId);
+    assert.deepEqual(plate.colors,object.colors);
+    assert.deepEqual(instance.translation,instance.localTranslation.map((n,a)=>n+plate.origin[a]));
+  }
+  assert.ok(model.includes('1 0 0 0 1 0 0 0 1 221 5 0'),'second plate is positioned in Bambu grid coordinates');
+  await assert.rejects(create3MF([entry(binary(tetra))],{plateOptions:{width:0}}),/有效/);
+});
+
+test('rotated native build transforms preserve source mesh scale, bed-facing Z and source coordinates',async()=>{
+  const source=tetra.map(face=>face.map(v=>[v[0]*35/3+100,v[1]*35-20,v[2]+12]));
+  const {model,manifest}=await unpack(await create3MF([entry(ascii(source),1,{copyColors:[['#FF0000']]})],{plateOptions:{width:100,depth:60,byColor:true}}));
+  const mesh=meshes(model)[0];assert.deepEqual(mesh.triangles.map(face=>face.map(v=>mesh.vertices[v])),source);
+  const instance=manifest.instances[0];assert.equal(instance.rotation,90);assert.equal(instance.instanceId,0);
+  const transform=[...model.matchAll(/<item objectid="\d+" transform="([^"]+)"/g)][0][1].split(' ').map(Number);
+  assert.deepEqual(transform.slice(0,9),[0,1,0,-1,0,0,0,0,1]);
+  const projected=mesh.vertices.map(v=>[-v[1]+transform[9],v[0]+transform[10],v[2]+transform[11]]);
+  assert.equal(Math.min(...projected.map(v=>v[2])),0);assert.equal(Math.max(...projected.map(v=>v[2])),4);
+  assert.ok(projected.every(v=>v[0]>=5&&v[0]<=95&&v[1]>=5&&v[1]<=55));
+});
+
+test('Bambu Studio native importer preserves colors, plate assignments and painted component faces on roundtrip',{
+  skip:!process.env.BAMBU_STUDIO_CLI,
+},async()=>{
+  const frames=[0,20].map(x=>({rotation:[[1,0,0],[0,1,0],[0,0,1]],origin:[x+1.5,1,2],min:[-1.5,-1,-2],max:[1.5,1,2]}));
+  const entries=[entry(binary(tetra),2,{copyColors:[['#FF0000'],['#FF0000']]}),entry(binary(tetra),1,{id:'blue',copyColors:[['#0000FF']]}),entry(binary([...tetra,...moved(tetra,[20,0,0])]),1,{id:'mixed',copyColors:[['#FF0000','#0000FF']],colorFrames:frames})];
+  const {blob}=await create3MF(entries,{plateOptions:{byColor:true,width:180,depth:180,nozzle:0.4}});
+  const directory=await mkdtemp(join(tmpdir(),'vault-bambu-'));
+  try{
+    const input=join(directory,'input.3mf'),output=join(directory,'roundtrip.3mf');await writeFile(input,new Uint8Array(await blob.arrayBuffer()));
+    const run=spawnSync(process.env.BAMBU_STUDIO_CLI,['--debug','3','--arrange','0','--orient','0','--export-3mf',output,input],{cwd:directory,encoding:'utf8',timeout:60000});
+    assert.equal(run.status,0,run.stdout+'\n'+run.stderr);
+    const files=unzipSync(await readFile(output)),project=JSON.parse(strFromU8(files['Metadata/project_settings.config'])),settings=strFromU8(files['Metadata/model_settings.config']);
+    assert.deepEqual(project.filament_colour,['#FF0000','#0000FF']);
+    const plates=[...settings.matchAll(/<plate>([\s\S]*?)<\/plate>/g)];
+    assert.equal(plates.length,3);assert.deepEqual(plates.map(p=>(p[1].match(/<model_instance>/g)||[]).length),[2,1,1]);
+    const colors=Object.entries(files).filter(([p])=>p.endsWith('.model')).flatMap(([,bytes])=>[...strFromU8(bytes).matchAll(/paint_color="([^"]+)"/g)].map(m=>m[1]));
+    assert.deepEqual(colors.sort(),[...Array(4).fill('4'),...Array(4).fill('8')].sort());
+  }finally{await rm(directory,{recursive:true,force:true});}
 });
 
 test('translated build copies do not overlap in XY and each rests at z=0; no rotation or scale',async()=>{
@@ -181,7 +285,7 @@ test('above preview simplification threshold, every original face remains in exp
     for(let filled=first;filled<body.length;){const next=Math.min(filled,body.length-filled);body.set(body.subarray(0,next),filled);filled+=next;}
     return new Blob([bytes]);
   }};
-  const {model,manifest}=await unpack(await create3MF([entry(virtual)]));
+  const {model,manifest}=await unpack(await create3MF([entry(virtual,1,{copyColors:[['#FF6B24']]})]));
   assert.equal(manifest.objects[0].triangles,count);
   assert.equal((model.match(/<triangle /g)||[]).length,count);
   assert.equal(manifest.objects[0].vertices,3);

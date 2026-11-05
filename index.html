@@ -178,8 +178,27 @@
       <p id="pending-export-summary" role="status" aria-live="polite"></p>
       <div id="pending-export-issues" class="pending-export-issues" hidden></div>
       <ul id="pending-export-warnings" class="pending-export-warnings" hidden></ul>
+      <fieldset class="pending-export-options">
+        <legend>导出与分盘设置</legend>
+        <label class="pending-export-check"><input id="pending-export-by-color" type="checkbox" checked> 按颜色自动分盘（Bambu Studio 项目）</label>
+        <div id="pending-export-plate-fields" class="pending-export-plate-fields">
+          <label>选择方式<select id="pending-export-size-mode"><option value="device">按设备型号</option><option value="size" selected>按热床尺寸</option></select></label>
+          <label id="pending-export-device-field" hidden>设备型号<select id="pending-export-device"></select></label>
+          <label id="pending-export-bed-field">热床尺寸（常见型号参考）<select id="pending-export-bed"><option value="180x180">180 × 180 mm · 拓竹 A1 mini</option><option value="220x220">220 × 220 mm · 创想三维 Ender-3 V3 SE</option><option value="256x256" selected>256 × 256 mm · 拓竹 A1 / P1S / X1 Carbon</option><option value="300x300">300 × 300 mm · 创想三维 K1 Max</option><option value="325x320">325 × 320 mm · 拓竹 H2D 单喷嘴</option><option value="350x320">350 × 320 mm · 拓竹 H2D 双喷嘴总范围</option><option value="350x350">350 × 350 mm · Voron 2.4 350 规格</option><option value="custom">自定义尺寸 · 其他型号或改装热床</option></select></label>
+          <p id="pending-export-selected-bed" class="muted pending-export-help" role="status" aria-live="polite"></p>
+          <p class="muted pending-export-help">设备型号只确定排盘面积，不加载机型配置。H2D / H2D Pro 和 H2C 使用单喷嘴范围，X2D 使用主喷嘴范围；双喷嘴总范围不表示每个喷嘴都能覆盖。Combo / AMS 套装请选择对应机型。</p>
+          <div id="pending-export-custom-bed" class="pending-export-custom-bed" hidden>
+            <label>宽度（mm）<input id="pending-export-width" type="number" min="50" max="1000" step="0.1" value="256"></label>
+            <label>深度（mm）<input id="pending-export-depth" type="number" min="50" max="1000" step="0.1" value="256"></label>
+          </div>
+          <label>喷嘴直径<select id="pending-export-nozzle"><option value="0.2">0.2 mm</option><option value="0.4" selected>0.4 mm</option><option value="0.6">0.6 mm</option><option value="0.8">0.8 mm</option></select></label>
+          <p class="muted pending-export-help">每盘预留 5 mm 边距，零件间隔 5 mm。自动利用空隙并允许平面内旋转 90°，保留原来的贴床面；同色放不下时增加新盘。一个 STL 内的不同颜色组件保持整体，单独按颜色组合分盘。项目包含基础热床和喷嘴设置，切片前请核对实际打印机、耗材、打印高度和冲刷量。</p>
+          <p class="muted pending-export-help">项目不含 G-code 或机器、材料预设文件。Bambu Studio 可能提示“自定义的预设”，因为尚未指定实际机型和耗材；确认后请选择自己的打印机、耗材和工艺。</p>
+        </div>
+        <label class="pending-export-check"><input id="pending-export-remember" type="checkbox"> 记住设置（仅保存在当前浏览器）</label>
+      </fieldset>
       <ul id="pending-export-list" class="pending-export-list" aria-label="待导出的零件与数量"></ul>
-      <p class="muted pending-export-help">导出完整原模型，保留朝向，按剩余份数放入一个通用 3MF。STL 坐标按毫米处理；导入切片软件后请核对尺寸、自动排盘或分盘，并检查朝向与支撑。文件不含打印机配置或 G-code，导出不会改变打印进度。</p>
+      <p class="muted pending-export-help">导出完整原模型及剩余份数，STL 坐标按毫米处理，不含 G-code。关闭自动分盘可导出通用彩色 3MF，由切片软件导入颜色并排盘；Bambu Studio 2.8 可能提示仅加载几何数据。导出不会改变打印进度。</p>
       <progress id="pending-export-progress" max="100" value="0" aria-label="3MF 生成进度" hidden></progress>
       <p id="pending-export-status" class="muted" role="status" aria-live="polite"></p>
     </div>

@@ -7,6 +7,8 @@ import {buildBOM} from '../src/rules.js';
 import {moduleConfig,unitBOM} from '../src/planner.js';
 import {setPrinted} from '../src/state.js';
 import {buildPendingExport} from '../src/pending-export.js';
+import {DEFAULT_PLATE_OPTIONS,normalizePlateOptions} from '../src/print-plates.js';
+import {PRINT_DEVICES} from '../src/print-devices.js';
 
 function fixture(){
   const unit={id:'current',name:'S3:当前/模块',config:moduleConfig('drawer','S',3,'1F'),progress:{},colors:{}};
@@ -16,9 +18,9 @@ function fixture(){
 
 // Only DOM/download and asynchronous mesh packaging are replaced. Actual BOM,
 // progress conversion, pending selection and production UI event wiring run here.
-async function harness({unit,matches,deferred=false,honorAbort=true}={}){
+async function harness({unit,matches,deferred=false,honorAbort=true,savedSettings=null,storageWorks=true}={}){
   ({unit,matches}=unit?{unit,matches}:fixture());
-  const nodes=new Map(),jobs=[],downloads=[],urls=[],revoked=[],timers=[],notifications=[];
+  const nodes=new Map(),jobs=[],downloads=[],urls=[],revoked=[],timers=[],notifications=[],settingsWrites=[];
   let importing=false;
   function makeNode(tag,id=''){
     return {tagName:tag.toUpperCase(),id,children:[],listeners:{},attributes:{},disabled:false,hidden:false,open:false,value:0,_text:'',parentElement:null,
@@ -45,7 +47,8 @@ async function harness({unit,matches,deferred=false,honorAbort=true}={}){
     jobs.push(job);options.signal.addEventListener('abort',aborted,{once:true});
     if(!deferred)job.resolve();
   });
-  const context=createContext({buildPendingExport,export3MF,catalog,AbortController,DOMException,Blob,
+  const context=createContext({buildPendingExport,export3MF,catalog,AbortController,DOMException,Blob,DEFAULT_PLATE_OPTIONS,normalizePlateOptions,PRINT_DEVICES,
+    readExportSettings:()=>savedSettings,saveExportSettings:(options,remember)=>{settingsWrites.push({options,remember});return storageWorks;},
     getUnit:()=>unit,getMatches:()=>matches,isImporting:()=>importing,notify:message=>notifications.push(message),
     document:{getElementById:node,createElement:tag=>makeNode(tag),body},
     URL:{createObjectURL(blob){const url='blob:local-'+urls.length;urls.push({url,blob});return url;},revokeObjectURL(url){revoked.push(url);}},
@@ -54,7 +57,7 @@ async function harness({unit,matches,deferred=false,honorAbort=true}={}){
   const source=(await readFile(new URL('../src/pending-export-ui.js',import.meta.url),'utf8')).replace(/^import .*;\r?\n/gm,'').replace('export function initPendingExport','function initPendingExport');
   runInContext(source,context);
   runInContext('initPendingExport({getUnit,getMatches,catalog,isImporting,notify})',context);
-  return {unit,matches,node,jobs,downloads,urls,revoked,timers,notifications,body,setImporting:value=>{importing=value;}};
+  return {unit,matches,node,jobs,downloads,urls,revoked,timers,notifications,settingsWrites,body,setImporting:value=>{importing=value;}};
 }
 
 test('preview uses current pending quantities and download is a named 3MF without changing progress',async()=>{
@@ -82,6 +85,48 @@ test('missing pending source disables export and even forced start does not call
   assert.equal(ui.node('pending-export-start').disabled,true);assert.equal(ui.node('pending-export-issues').hidden,false);assert.match(ui.node('pending-export-issues').textContent,/尚未导入/);
   await ui.node('pending-export-start').fire();
   assert.equal(ui.jobs.length,0);assert.equal(ui.downloads.length,0);assert.deepEqual(unit.progress,before);
+});
+
+test('export dialog offers bed presets, custom dimensions and remembered settings and sends them to packaging',async()=>{
+  const savedSettings={byColor:true,width:275,depth:210,nozzle:0.6,remember:true},ui=await harness({savedSettings});
+  ui.node('export-pending-3mf').fire();
+  assert.equal(ui.node('pending-export-bed').value,'custom');assert.equal(ui.node('pending-export-custom-bed').hidden,false);
+  assert.equal(ui.node('pending-export-width').value,'275');assert.equal(ui.node('pending-export-depth').value,'210');assert.equal(ui.node('pending-export-remember').checked,true);
+  ui.node('pending-export-bed').value='180x180';ui.node('pending-export-bed').fire('change');
+  assert.equal(ui.node('pending-export-custom-bed').hidden,true);
+  ui.node('pending-export-remember').checked=false;
+  await ui.node('pending-export-start').fire();
+  assert.deepEqual(ui.jobs[0].options.plateOptions,{byColor:true,width:180,depth:180,nozzle:0.6});
+  assert.equal(ui.settingsWrites[0].remember,false);
+});
+
+test('invalid custom bed never starts export; denied preferences do not prevent a valid download',async()=>{
+  const ui=await harness({storageWorks:false});ui.node('export-pending-3mf').fire();
+  ui.node('pending-export-bed').value='custom';ui.node('pending-export-width').value='';
+  await ui.node('pending-export-start').fire();assert.equal(ui.jobs.length,0);assert.match(ui.node('pending-export-status').textContent,/有效/);
+  ui.node('pending-export-width').value='256';ui.node('pending-export-remember').checked=true;
+  await ui.node('pending-export-start').fire();assert.equal(ui.downloads.length,1);assert.ok(ui.notifications.some(n=>/未能保存/.test(n)));
+  ui.node('pending-export-width').value='';ui.node('pending-export-by-color').checked=false;ui.node('pending-export-by-color').fire('change');
+  assert.equal(ui.node('pending-export-plate-fields').hidden,true);
+  await ui.node('pending-export-start').fire();assert.equal(ui.jobs.at(-1).options.plateOptions.byColor,false);assert.equal(ui.downloads.length,2);
+});
+
+test('device and size selection restore separately and remembered device dimensions reach the exporter',async()=>{
+  const ui=await harness({savedSettings:{...DEFAULT_PLATE_OPTIONS,width:180,depth:180,deviceId:'a1-mini',remember:true}});
+  ui.node('export-pending-3mf').fire();
+  assert.equal(ui.node('pending-export-size-mode').value,'device');assert.equal(ui.node('pending-export-device').value,'a1-mini');
+  assert.equal(ui.node('pending-export-device-field').hidden,false);assert.equal(ui.node('pending-export-bed-field').hidden,true);
+  assert.match(ui.node('pending-export-selected-bed').textContent,/180 × 180/);
+  ui.node('pending-export-device').value='h2d-single';ui.node('pending-export-device').fire('change');
+  await ui.node('pending-export-start').fire();
+  assert.deepEqual(ui.jobs[0].options.plateOptions,{...DEFAULT_PLATE_OPTIONS,width:325,depth:320,deviceId:'h2d-single'});
+  assert.equal(ui.settingsWrites[0].remember,true);assert.equal(ui.settingsWrites[0].options.deviceId,'h2d-single');
+  ui.node('pending-export-size-mode').value='size';ui.node('pending-export-size-mode').fire('change');
+  assert.equal(ui.node('pending-export-device-field').hidden,true);assert.equal(ui.node('pending-export-bed-field').hidden,false);
+  ui.node('pending-export-bed').value='custom';ui.node('pending-export-width').value='275';ui.node('pending-export-depth').value='210';
+  await ui.node('pending-export-start').fire();
+  assert.deepEqual(ui.jobs[1].options.plateOptions,{...DEFAULT_PLATE_OPTIONS,width:275,depth:210});
+  assert.equal(Object.hasOwn(ui.settingsWrites[1].options,'deviceId'),false);
 });
 
 test('cancel aborts an active export, closes dialog and cannot download a late successful result',async()=>{

@@ -5,6 +5,8 @@ import {buildBOM,defaults} from '../src/rules.js';
 import {unitBOM,moduleConfig,effectiveProgress} from '../src/planner.js';
 import {setPrinted} from '../src/state.js';
 import {buildPendingExport} from '../src/pending-export.js';
+import {buildScene} from '../src/assembly.js';
+import {Color} from 'three';
 
 const unit=(id='current',config=moduleConfig('drawer','S',3,'1F'))=>({id,name:id,config,progress:{},colors:{}});
 const blob=()=>new Blob(['synthetic source; mesh validation belongs to the 3MF writer']);
@@ -30,6 +32,24 @@ test('partially printed files export remaining copies, while downloaded-only rem
   setPrinted(u,runner.id,1,1);u.progress[body.id]={downloadedAt:'2026-11-01T00:00:00Z'};
   const result=buildPendingExport(u,matches,catalog);
   assert.equal(exported(result,runner.id).quantity,1);assert.equal(exported(result,body.id).quantity,1);
+});
+
+test('export colors match viewer defaults and full-key overrides; completed copies do not shift remaining custom colors',()=>{
+  const u=unit('colored'),matches=matchesFor(u),runner=rowFor(u,'runner-guide'),scene=buildScene({...u.config,id:u.id});
+  u.colors[`${u.id}:${runner.id}:0:0`]='#FF0000';
+  u.colors[`${runner.id}:1:0`]='#0000FF';
+  u.colors[`${u.id}:${runner.id}:1:0`]='#376680';
+  const initial=buildPendingExport(u,matches);
+  assert.deepEqual(exported(initial,runner.id).copyColors,[['#FF0000'],['#376680']]);
+  for(const entry of initial.entries.filter(e=>e.id!==runner.id)){
+    const part=scene.parts.find(p=>p.id===entry.id);
+    assert.equal(entry.copyColors[0][0],'#'+new Color(...part.color).getHexString());
+  }
+  setPrinted(u,runner.id,1,1);
+  assert.deepEqual(exported(buildPendingExport(u,matches),runner.id).copyColors,[['#376680']]);
+  matches.get(runner.id).variant={piecesPerFile:2,referencePiecesPerFile:1};
+  u.progress={};
+  assert.deepEqual(exported(buildPendingExport(u,matches),runner.id).copyColors,[['#FF0000','#376680']]);
 });
 
 test('completed rows need no reimport and are omitted; fully complete produces no empty export',()=>{

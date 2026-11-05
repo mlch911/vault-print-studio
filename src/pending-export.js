@@ -1,5 +1,7 @@
 import defaultCatalog from './catalog.json' with {type:'json'};
 import {unitBOM,effectiveProgress} from './planner.js';
+import {buildScene,componentFrames} from './assembly.js';
+import {effectivePartColor} from './part-colors.js';
 
 const validCount=value=>Number.isSafeInteger(value)&&value>=0&&value<=10000;
 const validPieces=value=>Number.isSafeInteger(value)&&value>0&&value<=10000;
@@ -33,6 +35,8 @@ export function buildPendingExport(unit,matches=new Map(),catalog=defaultCatalog
   for(const missing of bom.missing||[])issues.push('配置目录缺少零件：'+message(missing));
   for(const input of bom.needsInput||[])issues.push('请先确认配置：'+message(input));
   warnings.push(...(bom.warnings||[]).map(message));
+  let parts=[];
+  try{parts=buildScene({...current.config,id:current.id,colors:current.colors}).parts;}catch(error){issues.push('无法读取当前配色：'+message(error));}
   const seen=new Set();summary.totalTypes=bom.rows.length;
   if(!bom.rows.length&&!issues.length)issues.push('当前配置没有可导出的打印零件。');
   for(const row of bom.rows){
@@ -88,7 +92,15 @@ export function buildPendingExport(unit,matches=new Map(),catalog=defaultCatalog
     if(!readable(match?.file)){
       issues.push(`${name}：尚未导入可读取的 STL，请先在模型管理中匹配此零件。`);continue;
     }
-    previewEntries.push({id:row.id,name,file:match.file,quantity,piecesPerFile:perFile,remainingPieces,extraPieces,requiredFileCopies:row.qty,printedFileCopies:progress.printed});
+    const referencePieces=row.referencePiecesPerFile||1,partColors=new Map();
+    for(const part of parts.filter(p=>p.id===row.id)){
+      const color=effectivePartColor(current,part);
+      partColors.set((part.copy||0)*referencePieces+(part.component||0),color);
+    }
+    const fallback=partColors.values().next().value||'#bfc2c4',first=progress.physicalDone??progress.printed*referencePieces;
+    const copyColors=Array.from({length:quantity},(_,copy)=>Array.from({length:perFile||1},(_,component)=>partColors.get(first+copy*(perFile||1)+component)||fallback));
+    const colorFrames=match.variant?.sourceFrames||componentFrames(row.id);
+    previewEntries.push({id:row.id,name,file:match.file,quantity,copyColors,colorFrames,piecesPerFile:perFile,remainingPieces,extraPieces,requiredFileCopies:row.qty,printedFileCopies:progress.printed});
   }
   return result();
 }

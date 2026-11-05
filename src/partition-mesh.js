@@ -32,8 +32,9 @@ function validFrame(f) {
  * @returns {{parts: Float32Array[], resolved: boolean, diagnostic: object}}
  * A failed/ambiguous match returns [raw], including every original triangle.
  * Call on original coordinates before any preview decimation or centering.
+ * membershipOnly returns each original triangle's semantic slot without copying meshes.
  */
-export function partitionMesh(raw, frames) {
+export function partitionMesh(raw, frames, {membershipOnly=false}={}) {
   if (!(raw instanceof Float32Array) || !raw.length || raw.length % 9 ||
       !raw.every(Number.isFinite)) {
     throw new TypeError('分区输入须为有限坐标组成的 Float32Array 三角形数组。');
@@ -157,6 +158,10 @@ export function partitionMesh(raw, frames) {
     if (c.boundsError > LIMITS.boundsMM) return fallback('frame-signature-mismatch');
   }
 
+  if(membershipOnly){
+    for(let t=0;t<triangles;t++)membership[t]=diagnostic.components[membership[t]].frame;
+    return {resolved:true,triangleSlots:membership,diagnostic};
+  }
   const parts = new Array(frames.length), offsets = new Uint32Array(frames.length);
   for (const c of diagnostic.components) parts[c.frame] = new Float32Array(c.triangles * 9);
   for (let t = 0; t < triangles; t++) {
