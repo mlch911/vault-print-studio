@@ -124,7 +124,7 @@
 
           <section class="print-area" aria-labelledby="print-heading">
             <div class="print-header"><div class="print-title"><h2 id="print-heading">打印清单</h2><span id="print-summary" class="muted" aria-live="polite">等待配置</span></div><div class="list-controls"><label class="search-field"><span class="visually-hidden">搜索打印零件</span><input id="print-search" type="search" placeholder="查找零件" autocomplete="off"></label><label><span class="visually-hidden">筛选打印状态</span><select id="print-filter"><option value="all">全部状态</option><option value="pending">待打印</option><option value="done">已打印</option></select></label></div></div>
-            <div class="pending-export-toolbar"><button id="export-pending-3mf" class="btn btn-primary" type="button">导出待打印 3MF ↓</button><span class="muted">当前模块 · 自动扣除已打印数量</span></div>
+            <div class="pending-export-toolbar"><button id="export-pending-3mf" class="btn btn-primary" type="button">导出待打印 3MF ↓</button><span class="muted">当前模块 · 自动扣除已打印数量</span><span id="model-cache-status" class="muted" role="status" aria-live="polite"></span></div>
             <div id="print-list" class="print-list" aria-label="当前模块打印零件"></div>
           </section>
         </div>
@@ -169,7 +169,7 @@
 
   <dialog id="models-dialog" class="models-dialog" aria-labelledby="models-title">
     <div class="dialog-heading"><div><p class="eyebrow">LOCAL FILES / 本地文件</p><h2 id="models-title">模型管理<span class="accent">.</span></h2></div><button id="models-close" class="btn btn-icon" type="button" aria-label="关闭模型管理">×</button></div>
-    <div class="dialog-body"><div class="import-toolbar"><p id="import-summary" role="status" aria-live="polite">尚未导入模型</p><button class="btn btn-outline" data-action="import-folder" type="button">选择文件夹 ↥</button></div><div id="dialog-import-feedback"></div><p class="dialog-help">读取 STL 的实际几何内容，支持中英文、改名及重新导出文件。形状不同的版本单独核对；__MACOSX 附属文件自动跳过。文件不会上传。</p><label class="search-field"><span class="visually-hidden">搜索文件匹配结果</span><input id="match-search" type="search" placeholder="搜索零件名称或文件名" autocomplete="off"></label><div id="match-list" class="match-list" aria-label="模型匹配结果"></div></div>
+    <div class="dialog-body"><div class="import-toolbar"><p id="import-summary" role="status" aria-live="polite">尚未导入模型</p><button class="btn btn-outline" data-action="import-folder" type="button">选择文件夹 ↥</button></div><div id="dialog-import-feedback"></div><p id="dialog-cache-status" class="dialog-help" role="status" aria-live="polite"></p><p class="dialog-help">读取 STL 的实际几何内容，支持中英文、改名及重新导出文件。形状不同的版本单独核对；__MACOSX 附属文件自动跳过。文件不会上传。</p><label class="search-field"><span class="visually-hidden">搜索文件匹配结果</span><input id="match-search" type="search" placeholder="搜索零件名称或文件名" autocomplete="off"></label><div id="match-list" class="match-list" aria-label="模型匹配结果"></div></div>
     <div class="dialog-footer"><button id="clear-models" class="btn btn-quiet danger" type="button">清除已导入模型</button><button id="confirm-import" class="btn btn-primary" type="button">进入工作台 <span aria-hidden="true">→</span></button></div>
   </dialog>
 

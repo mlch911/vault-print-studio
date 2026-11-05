@@ -13,6 +13,7 @@ import catalog from '../src/catalog.json' with {type:'json'};
 import {buildBOM,defaults,configurationOptions} from '../src/rules.js';
 import {buildScene,componentFrames} from '../src/assembly.js';
 import {buildComposition} from '../src/composition.js';
+import {restoreModelCache,snapshotModelCache} from '../src/model-cache.js';
 import {patterns,moduleConfig,configProblem,layerConfigs,layerChoices,changePlan,unitBOM,effectiveProgress,printProgress,printedState,libraryRows,validateManualPDF} from '../src/planner.js';
 
 const makeUnit=(id,w='L',d=3,h='1F')=>({id,name:id,config:moduleConfig('drawer',w,d,h),progress:{},colors:{}});
@@ -210,7 +211,7 @@ test('manuals require PDF bytes and enforce the 100 MB cap regardless of extensi
 
 // Exercise app event wiring without a browser/server or WebGL. Scene/BOM logic remains real.
 async function appHarness({pdfFactory}={}){
-  const nodes=new Map(),listeners={},revoked=[],pdfCalls=[],pdfDocs=[],pdfRenders=[],timers=new Map();let timerId=0,canvasId=0;
+  const nodes=new Map(),listeners={},revoked=[],pdfCalls=[],pdfDocs=[],pdfRenders=[],timers=new Map();let timerId=0,canvasId=0,recoveryOptions,autoSaves=0;
   function node(id){if(!nodes.has(id))nodes.set(id,{id,value:['library-category','print-filter'].includes(id)?'all':'',checked:id==='library-optional',innerHTML:'',textContent:'',style:{},clientWidth:600,children:[],appendChild(child){this.children.push(child);},getContext(){return {};},dataset:{},options:[],listeners:{},classList:{add(){},remove(){},toggle(){}},setAttribute(k,v){this[k]=v;},addEventListener(k,fn){this.listeners[k]=fn;},querySelector(selector){return node(id+' '+selector);},querySelectorAll(){return [];},closest(selector){return selector==='.manual-view'?node(id+' view'):this;},showModal(){},close(){}});return nodes.get(id);}
   class FakeViewer{
     constructor(canvas,options){this.canvas=canvas;this.options=options;this.calls=[];this.printedCalls=[];}
@@ -232,13 +233,13 @@ async function appHarness({pdfFactory}={}){
     }};pdfDocs.push(doc);
     return {promise:Promise.resolve(doc),destroy:()=>doc.destroy()};
   };
-  const context=createContext({books,AbortController,bundledManual:async()=>{throw Error("offline test");},initUpdates(){},initPendingExport(){},initColorPalette(){return {render(){},close(){}};},workspaceRecovery:()=>({prepare(){},resume(){},invalidate(){}}),...stateAPI,...plannerAPI,...queueAPI,...drawerLayoutAPI,...directoryInputAPI,compositionProblem,catalog,buildBOM,defaults,configurationOptions,buildScene,buildComposition,componentFrames,Viewer:FakeViewer,crypto,structuredClone,Blob,clearGeometry(){},clearThumbnails(){},scanFiles(){},thumbnail(){return Promise.reject(Error('Invalid geometry'));},moduleThumbnail(){return Promise.resolve({url:'data:image/webp;base64,test',missing:0,unresolved:false});},
+  const context=createContext({books,AbortController,bundledManual:async()=>{throw Error("offline test");},initUpdates(){},initPendingExport(){},initColorPalette(){return {render(){},close(){}};},workspaceRecovery:options=>{recoveryOptions=options;return {prepare(){},resume(){},invalidate(){},save(){autoSaves++;}};},restoreModelCache,...stateAPI,...plannerAPI,...queueAPI,...drawerLayoutAPI,...directoryInputAPI,compositionProblem,catalog,buildBOM,defaults,configurationOptions,buildScene,buildComposition,componentFrames,Viewer:FakeViewer,crypto,structuredClone,Blob,clearGeometry(){},clearThumbnails(){},scanFiles(){},thumbnail(){return Promise.reject(Error('Invalid geometry'));},moduleThumbnail(){return Promise.resolve({url:'data:image/webp;base64,test',missing:0,unresolved:false});},
     getDocument,GlobalWorkerOptions:{},pdfWorkerURL:'/assets/pdf.worker.min.mjs',
     requestAnimationFrame(fn){fn();},document:{getElementById:node,querySelector:node,createElement:tag=>node(tag+'-'+(++canvasId)),querySelectorAll(){return [];},addEventListener(k,fn){listeners[k]=fn;}},window:{devicePixelRatio:3,addEventListener(){}},IntersectionObserver:class{constructor(callback){this.callback=callback;}observe(){}unobserve(){}disconnect(){}},ResizeObserver:class{constructor(callback){this.callback=callback;}observe(){}disconnect(){this.disconnected=true;}},localStorage:{getItem(){return null;},setItem(){}},URL:{createObjectURL(){return 'blob:local-'+(++urlIndex);},revokeObjectURL(url){revoked.push(url);}},setTimeout(fn){const id=++timerId;timers.set(id,fn);return id;},clearTimeout(id){timers.delete(id);},clearInterval(){}});
   const manualSource=(await readFile(new URL('../src/manual-viewer.js',import.meta.url),'utf8')).replace(/^import .*;\r?\n/gm,'').replace('export class LocalManualViewer','class LocalManualViewer');runInContext(manualSource,context);
   const source=(await readFile(new URL('../src/app.js',import.meta.url),'utf8')).replace(/^import .*;\r?\n/gm,'');
   runInContext(source,context);
-  return {node,listeners,revoked,pdfCalls,pdfDocs,pdfRenders,runTimers(){const pending=[...timers.values()];timers.clear();pending.forEach(fn=>fn());},run:code=>runInContext(code,context),flush:()=>new Promise(resolve=>setImmediate(resolve))};
+  return {node,listeners,revoked,pdfCalls,pdfDocs,pdfRenders,get recoveryOptions(){return recoveryOptions;},get autoSaves(){return autoSaves;},runTimers(){const pending=[...timers.values()];timers.clear();pending.forEach(fn=>fn());},run:code=>runInContext(code,context),flush:()=>new Promise(resolve=>setImmediate(resolve))};
 }
 
 test('selected column depth edit updates both sides and retains progress',async()=>{
@@ -422,6 +423,20 @@ test('failed or cancelled imports cannot replace the active model recovery list'
   app.node('clear-models').onclick();
   app.run("resolveScan({matches:new Map([['stale',{file:original}]])})");await app.run('pendingImport');
   assert.equal(app.run('importedFiles.length'),0);assert.equal(app.run('matches.size'),0);assert.equal(app.run('importBusy'),false);
+});
+
+test('ordinary imports autosave and a matching cache reopens the workspace without rescanning models',async()=>{
+  const app=await appHarness(),id=buildBOM(makeUnit('cached','S').config).rows[0].id;
+  app.run(`var original=new Blob(['model']);original.name='cached.stl';scanFiles=async()=>({matches:new Map([['${id}',{file:original,method:'content'}]]),unmatched:[],conflicts:[],invalid:[],duplicates:[],diagnostics:{}});`);
+  await app.run('importFiles([original])');assert.ok(app.autoSaves>0);
+  const before=app.autoSaves;app.run('save()');assert.ok(app.autoSaves>before);
+  const file=app.run('original'),key=await app.recoveryOptions.getCatalogKey();
+  const report={matches:new Map([[id,{file,method:'content'}]]),unmatched:[],conflicts:[],invalid:[],duplicates:[],diagnostics:{}};
+  const unit=makeUnit('cached','S'),data={schema:1,id:'cached',files:[file],manual:[],state:{version:1,units:[unit],activeUnit:unit.id,plans:[]},cache:snapshotModelCache([file],report.matches,report,key)};
+  const reopened=await appHarness();reopened.run("scanFiles=()=>{throw Error('cache must avoid scanning')}");
+  await reopened.recoveryOptions.restore(data);await reopened.flush();
+  assert.equal(reopened.node('gate').hidden,true);assert.equal(reopened.node('workspace').hidden,false);
+  assert.equal(reopened.run('matches.size'),1);assert.equal(reopened.run("matches.values().next().value.method"),'content');
 });
 
 test('delete and undo buttons preserve imported models, handle empty state, and exclude plan members',async()=>{

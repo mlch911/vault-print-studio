@@ -185,3 +185,38 @@ test('malformed path metadata never calls restore or writes localStorage during 
     assert.ok(data.files.every(file=>!file.webkitRelativePath));
   });
 });
+
+test('ordinary autosave persists model bytes once; later progress/manual changes reopen from metadata without rewriting models',async t=>{
+  const storage=memoryStorage(t),models=new Map(),metadata=new Map(),writes=[];
+  const file=pathFile([1,2,3],'model.stl','folder/model.stl'),files=[file],matches=new Map([['part',{file,manual:true,quantityByUnit:{unit:{qty:1}}}]]);
+  const state={version:1,units:[{id:'unit',progress:{part:{printed:0}},colors:{}}]};
+  const options={getState:()=>state,getFiles:()=>files,getMatches:()=>matches,getCatalogKey:async()=>'catalog-v1',getReport:()=>({}),isImporting:()=>false,notify(){},restore(){},
+    persist:async data=>{writes.push('models');models.set(data.id,{...structuredClone({...data,files:[]}),files:cloneFileBoundary(data.files)});},
+    persistMetadata:async data=>{writes.push('metadata');metadata.set(data.id,structuredClone(data));},
+  };
+  const recovery=workspaceRecovery(options);assert.equal(await recovery.save(),true);const id=storage.saved.get(pointer);assert.ok(models.has(id));
+  state.units[0].progress.part.printed=2;state.units[0].colors.part='#123456';matches.get('part').quantityByUnit.unit.qty=3;
+  assert.equal(await recovery.save(),true);assert.deepEqual(writes,['models','metadata']);assert.equal(Object.hasOwn(metadata.get(id),'files'),false);
+  const restored=[];
+  const fresh=workspaceRecovery({...options,getFiles:()=>[],getMatches:()=>new Map(),read:async key=>models.get(key),readMetadata:async key=>metadata.get(key),restore:data=>restored.push(data)});
+  await fresh.resume();assert.equal(restored.length,1);assert.equal(restored[0].state.units[0].progress.part.printed,2);
+  assert.equal(restored[0].state.units[0].colors.part,'#123456');assert.equal(restored[0].manual[0].quantityByUnit.unit.qty,3);
+  assert.equal(restored[0].files[0].webkitRelativePath,'folder/model.stl');assert.deepEqual(new Uint8Array(await restored[0].files[0].arrayBuffer()),new Uint8Array([1,2,3]));
+  assert.equal(restored[0].cache.catalogKey,'catalog-v1');
+});
+
+test('autosave failures keep the previous checkpoint and report that closing would lose unsaved models',async t=>{
+  const storage=memoryStorage(t),notices=[];
+  const file=pathFile([1],'model.stl',''),recovery=workspaceRecovery({getState:()=>({version:1}),getFiles:()=>[file],getMatches:()=>new Map([['part',{file}]]),isImporting:()=>false,restore(){},notify:message=>notices.push(message),persist:async()=>{throw Error('quota exceeded');}});
+  assert.equal(await recovery.save(),false);assert.equal(storage.saved.get(pointer),'previous');assert.ok(notices.some(message=>/自动保存失败.*暂勿关闭/.test(message)));
+});
+
+test('clearing during a pending model save cannot republish cached models after the clear',async t=>{
+  const storage=memoryStorage(t),file=pathFile([1],'model.stl','');let files=[file],started,release;
+  let removed;const cleared=new Promise(resolve=>removed=resolve);
+  const began=new Promise(resolve=>started=resolve),pending=new Promise(resolve=>release=resolve),records=new Map();
+  const recovery=workspaceRecovery({getState:()=>({version:1}),getFiles:()=>files,getMatches:()=>new Map(files.map(file=>['part',{file}])),isImporting:()=>false,restore(){},notify(){},persist:async data=>{started();await pending;records.set(data.id,data);},remove:async()=>{records.clear();removed();}});
+  const saving=recovery.save();await began;files=[];recovery.invalidate({remove:true});release();await saving;
+  await cleared;
+  assert.equal(storage.saved.has(pointer),false);assert.equal(records.size,0);
+});
