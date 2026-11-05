@@ -1,0 +1,6 @@
+services:
+  studio:
+    build: .
+    ports:
+      - "127.0.0.1:5187:80"
+    restart: unless-stopped

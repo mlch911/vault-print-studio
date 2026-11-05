@@ -25,6 +25,20 @@ Windows 本地入口安装方式见 `tools/local-launch/LOCAL-LAUNCH.txt`。本�
 
 ## 本地运行
 
+### Docker 运行
+
+安装并启动 Docker 后，在项目根目录执行：
+
+```sh
+docker compose up -d --build
+```
+
+打开 `http://127.0.0.1:5187/`。容器使用 Node.js 24 构建，再由 Nginx 提供静态文件；端口仅绑定本机。模型通过浏览器选择，不需要挂载进容器。进度保存在浏览器中，请保持相同浏览器和访问地址。
+
+使用 `docker compose ps` 查看运行状态，`docker compose logs` 查看日志，`docker compose down` 停止服务。源码更新后重新执行上述构建启动命令。
+
+### Node.js 运行
+
 需要 Node.js 24、npm，以及支持 WebGL、WebCrypto、Web Worker 和本地文件选择的现代浏览器。在项目根目录执行：
 
 ```sh

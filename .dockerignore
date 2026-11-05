@@ -1,0 +1,12 @@
+**
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!nginx.conf
+!LICENSE
+!THIRD_PARTY_NOTICES.md
+!src/
+!src/**
+!public/
+!public/**
