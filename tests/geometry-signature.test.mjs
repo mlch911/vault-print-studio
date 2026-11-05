@@ -344,8 +344,15 @@ test('pre-abort, progress-triggered cancellation, pending-read cancellation, and
 test('timers can cancel ongoing binary and ASCII processing, without a progress callback', async () => {
   for (const file of [repeatedBinary(300000), guarded(new Blob(['solid ', 'x'.repeat(8 * MiB), '\n', asciiText([A]).split('\n').slice(1).join('\n')]))]) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20);
-    try { await assert.rejects(analyzeSTLGeometry(file, {signal: controller.signal}), {name: 'AbortError'}); }
+    let timer;
+    // Arm after the first body read: a fixed delay from invocation races fast
+    // parsers, while arming before invocation only exercises the initial yield.
+    const source={size:file.size,slice(start,end){return {async arrayBuffer(){
+      const bytes=await file.slice(start,end).arrayBuffer();
+      if(bytes.byteLength>84&&timer===undefined)timer=setTimeout(()=>controller.abort(),0);
+      return bytes;
+    }};}};
+    try { await assert.rejects(analyzeSTLGeometry(source, {signal: controller.signal}), {name: 'AbortError'}); }
     finally { clearTimeout(timer); }
   }
 });
