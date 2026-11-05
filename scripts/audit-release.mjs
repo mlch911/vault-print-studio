@@ -8,7 +8,7 @@ import manualBooks from '../src/manual-library.json' with {type:'json'};
 
 // Read-only release audit. Does not run Git mutations, upload, or copy files.
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const ROOT_FILES = new Set(['index.html', 'package.json', 'package-lock.json', 'vite.config.js', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', '.gitignore', '.gitattributes']);
+const ROOT_FILES = new Set(['index.html', 'package.json', 'package-lock.json', 'vite.config.js', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', '.gitignore', '.gitattributes', 'Dockerfile', '.dockerignore', 'compose.yaml', 'nginx.conf']);
 const ROOT_DIRS = new Set(['.github', 'scripts', 'src', 'tests']);
 const LAUNCH_FILES = new Set(['server.mjs','launch.ps1','stop.ps1','open-enhanced.cmd','stop-enhanced.cmd','LOCAL-LAUNCH.txt','smoke-launch.ps1'].map(name=>'tools/local-launch/'+name));
 const SOURCE_EXTENSIONS = new Set(['.js', '.mjs', '.json', '.html', '.css', '.md', '.yml', '.yaml']);
@@ -121,8 +121,10 @@ function frameProblems(data, multiple, ids) {
   return issues;
 }
 
-function textProblems(text, { dist = false, json = false } = {}) {
+function textProblems(text, { dist = false, json = false, dockerfile = false } = {}) {
   const issues = [];
+  // This exact Nginx destination belongs to the container, not the developer's machine.
+  if (dockerfile) text = text.replace(/^COPY nginx\.conf \/etc\/nginx\/conf\.d\/default\.conf$/gm, 'COPY nginx.conf container-config');
   if (text.includes('\u0000') || text.includes('\ufffd')) issues.push('binary or invalid UTF-8 content');
   const checks = [
     [/-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/, 'private key material'],
@@ -208,7 +210,7 @@ export async function auditRelease(root = ROOT, { requireDist = false } = {}) {
     if (stat.size > (dist ? DIST_LIMIT : SOURCE_LIMIT) || bytes-manualBytes > TOTAL_LIMIT) { issues.push(`${label}: release size budget exceeded`); return; }
     const text = await readFile(full, 'utf8');
     texts.set(label, text);
-    issues.push(...textProblems(text, { dist, json: extname(path) === '.json' }).map(message => `${label}: ${message}`));
+    issues.push(...textProblems(text, { dist, json: extname(path) === '.json', dockerfile: !dist && path === 'Dockerfile' }).map(message => `${label}: ${message}`));
     if (extname(path) === '.json') {
       try {
         const data = JSON.parse(text); jsonFiles.set(label, data);
@@ -287,6 +289,10 @@ function selfTest() {
   check(textProblems('"' + ['C:', 'Users', 'person', 'model'].join('\\') + '"').length > 0, 'Windows local path blocked');
   check(textProblems('source ' + ['E:', 'System', 'private'].join('/')).length > 0, 'unquoted local path blocked');
   check(textProblems('"' + ['', 'home', 'person', 'model'].join('/') + '"').length > 0, 'Unix local path blocked');
+  const nginxCopy = 'COPY nginx.conf ' + ['', 'etc', 'nginx', 'conf.d', 'default.conf'].join('/');
+  check(!textProblems(nginxCopy, { dockerfile: true }).length, 'exact container config destination allowed in Dockerfile');
+  check(textProblems(nginxCopy).length > 0, 'container path exception does not apply to other source');
+  check(textProblems(nginxCopy + '\nCOPY ' + ['', 'home', 'person', 'model'].join('/') + ' /app', { dockerfile: true }).length > 0, 'Dockerfile still rejects local source paths');
   check(textProblems('"' + 'gh' + 'p_' + 'a'.repeat(40) + '"').length > 0, 'credential blocked');
   check(!textProblems('geometry.setAttribute("position", new BufferAttribute(raw, 3)); const triangles = raw.length / 9;', { dist: true }).length, 'runtime geometry code allowed');
   check(!textProblems('const color=test?g:/ Box |Key/.test(name)?h:j;', { dist: true }).length, 'minified ternary regex is not a drive path');

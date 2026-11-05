@@ -37,6 +37,19 @@ docker compose up -d --build
 
 使用 `docker compose ps` 查看运行状态，`docker compose logs` 查看日志，`docker compose down` 停止服务。源码更新后重新执行上述构建启动命令。
 
+### GitHub 自动构建镜像
+
+`main` 分支 push 后，`Publish Docker` 工作流先运行测试与发布审计，再将 AMD64 / ARM64 镜像推送到 `ghcr.io/<仓库所有者>/vault-print-studio`。也可在 Actions 页面手动触发。使用内置 `GITHUB_TOKEN`，无需配置 Docker Hub 密钥。
+
+当前仓库镜像为 `ghcr.io/mlch911/vault-print-studio:latest`，每次构建另有 `sha-<完整提交 SHA>` 标签，便于固定版本。运行已发布镜像：
+
+```sh
+docker run -d --name vault-print-studio --restart unless-stopped \
+  -p 127.0.0.1:5187:80 ghcr.io/mlch911/vault-print-studio:latest
+```
+
+首次发布的 GHCR 包可能默认为私有；匿名拉取需要在 GitHub 包设置中将可见性设为 Public，私有包则需先登录 GHCR。
+
 ### Node.js 运行
 
 需要 Node.js 24、npm，以及支持 WebGL、WebCrypto、Web Worker 和本地文件选择的现代浏览器。在项目根目录执行：
