@@ -145,7 +145,7 @@ progress::-moz-progress-bar { background: var(--orange); }
 .step-track label, .explode-control label { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .explode-control { flex: 0 1 135px; border-left: 1px solid var(--line); padding-left: 16px; }
 #explode-label { font-family: var(--mono); color: var(--orange); }
-.config-panel { grid-area: config; min-width: 0; overflow-y: auto; scrollbar-width: thin; background: var(--surface); border-left: 1px solid var(--line); }
+.config-panel { grid-area: config; min-width: 0; background: var(--surface); border-left: 1px solid var(--line); }
 .panel-heading { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
 .field { display: flex; flex-direction: column; min-width: 0; color: var(--muted); }
 .field > input, .field > select { color: var(--text); font-size: 12px; }
@@ -169,7 +169,7 @@ progress::-moz-progress-bar { background: var(--orange); }
 .print-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; }.print-title h2 { font-size: 13px; }.print-title .muted { font-size: 10px; }
 .list-controls { display: flex; gap: 7px; }.list-controls input, .list-controls select { min-height: 30px !important; padding-block: 4px !important; font-size: 10px; }
 .search-field { display: block; min-width: 0; }.search-field input { width: 100%; }
-.print-list { display: grid; overflow: auto; scrollbar-width: thin; scroll-padding: 12px; }
+.print-list { display: grid; }
 .print-list:empty::before { content: "配置模块后，所需零件会显示在这里。"; grid-column: 1 / -1; color: var(--faint); font-size: 11px; padding: 19px 0; }
 .part-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); background: var(--surface); overflow: hidden; transition: border-color 160ms, background 160ms; }
 .part-card:hover { border-color: #586370; }.part-card.is-selected, .part-card[aria-selected="true"] { border-color: var(--orange); }
@@ -266,7 +266,7 @@ progress { height: 4px; border-radius: 9px; }
 .entry-note { display: flex; align-items: center; gap: 10px; padding: 20px 24px; color: var(--muted); font-size: 11px; }
 .gate-footer { position: static; grid-column: 1/-1; margin-top: 20px; padding-top: 22px; border-top: 1px solid var(--line-soft); }
 
-/* Canvas-first workbench, with a bounded configuration rail. */
+/* Canvas-first workbench; configuration and print cards expand with the page. */
 .module-bar { min-height: 62px; }
 #module-switch { width: 240px; border-color: var(--line); font-size: 13px; }
 .workbench { grid-template-columns: minmax(0,1fr) 320px; grid-template-rows: clamp(410px,51svh,630px) auto; border-radius: 8px; background: var(--surface); }
@@ -284,7 +284,7 @@ progress { height: 4px; border-radius: 9px; }
 .assembly-controls { min-height: 64px; background: #15191f; }
 .step-track label, .explode-control label { font-size: 11px; }
 .explode-control { flex-basis: 160px; }
-.config-panel { max-height: calc(clamp(410px,51svh,630px) + 440px); padding: 20px; }
+.config-panel { padding: 20px; }
 .panel-heading { margin-bottom: 20px; }
 .panel-heading .eyebrow { font-size: 9px; }
 .field { gap: 6px; margin-bottom: 14px; font-size: 12px; }
@@ -307,7 +307,7 @@ progress { height: 4px; border-radius: 9px; }
 #print-summary { font-size: 11px; }
 .list-controls .search-field { width: 160px; }
 .list-controls select { min-width: 115px; }
-.print-list { grid-template-columns: repeat(auto-fill,minmax(194px,1fr)); grid-auto-rows: max-content; align-content: start; gap: 12px; max-height: 370px; min-height: 180px; padding: 0 16px 16px; }
+.print-list { grid-template-columns: repeat(auto-fill,minmax(194px,1fr)); grid-auto-rows: max-content; align-content: start; gap: 12px; min-height: 180px; padding: 0 16px 16px; }
 .part-card { border-radius: 6px; }
 .part-card > .part-thumb { flex: 0 0 116px; }
 .part-thumb { height: 116px; padding: 0; border-bottom: 1px solid var(--line-soft); background: radial-gradient(ellipse at center,#2e374142,transparent 75%),#11151b; }
@@ -465,7 +465,6 @@ progress { height: 4px; border-radius: 9px; }
   #config-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 20px; }
   #config-fields { grid-column: 1 / -1; }
   .config-fields > .field:not(.checkbox-field), .config-fields > .field-row { max-width: 500px; }
-  .print-list { max-height: 460px; }
   .plan-layout { grid-template-columns: minmax(0,1fr); }
   .plan-sidebar { max-height: none; overflow: visible; border-left: 0; border-top: 1px solid var(--line); }
   .plan-palette { grid-template-columns: repeat(4,minmax(0,1fr)); }
