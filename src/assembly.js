@@ -4,7 +4,7 @@ import orientation from './orientation.json' with {type:'json'};
 import {buildBOM,normalizeConfig} from './rules.js';
 import {fitSustainer} from './sustainer-fit.js';
 import {fitDrawer} from './drawer-fit.js';
-import {packedDrawerScene} from './packed-drawer.js';
+import {packedDrawerScene,fullRunnerScene} from './packed-drawer.js';
 const byId=Object.fromEntries(catalog.map(p=>[p.id,p]));
 const MESH_META=byId,ORIENTATION=orientation,ASSEMBLY_V4_DATA=frameData;
 // Frames define source coordinates; no triangle memberships or geometry are bundled.
@@ -737,6 +737,7 @@ export function buildScene(input={},options={}){
  if(!Array.isArray(origin)||origin.length!==3||origin.some(v=>!Number.isFinite(v))||!Number.isFinite(open)||!Number.isFinite(explode)||(progress!==Infinity&&!Number.isFinite(progress)))throw new TypeError("场景参数无效，请检查原点、开合量、展开量与步骤。");
  const invalid=bom.rows.filter(r=>!byId[r.id]?.bbox).map(r=>r.id);
  if(invalid.length||!bom.rows.length)return {parts:[],size:[0,0,0],pitch:0,bom,hardware:bom.hardware,errors:bom.errors,missing:[...bom.missing,...invalid],warnings:[...bom.warnings],audit:[],quantityComplete:false,physicalFitVerified:false};
+ if(config.kind==='drawer'&&config.fullRunners)return fullRunnerScene(config,bom,options,buildScene,componentFrames);
  if(config.kind==='drawer'&&config.drawers!==undefined)return packedDrawerScene(config,bom,options,buildScene,componentFrames);
  const builders=createBuilders(config,bom),scene=config.kind==='mods'?builders.mods(config,origin,Math.max(0,explode),progress):builders.module(config,origin,Math.max(0,Math.min(1,open)),Math.max(0,explode),progress);
  if(config.kind==='sustainer')fitSustainer(scene,config,{origin,open:Math.max(0,Math.min(1,open)),explode:Math.max(0,explode)});

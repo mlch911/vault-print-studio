@@ -1,4 +1,5 @@
 export const frameRoles=new Set(['body','latch','roof','handle','roof-insert']);
+export const runnerRoles=new Set(['runner-guide','runner-slide','runner-stopper']);
 export const drawerHeight=h=>({'1F':1,'2F':2,'4F':4})[h]||0;
 export function drawerLayoutProblem(c){
  if(c.drawers===undefined)return '';

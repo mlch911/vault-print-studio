@@ -1,5 +1,41 @@
 import datums from './drawer-slot-data.json' with {type:'json'};
-import {frameRoles,drawerHeight} from './drawer-layout.js';
+import {frameRoles,runnerRoles,drawerHeight} from './drawer-layout.js';
+
+// Preserve existing copy identities and fill only the unused 1F rail positions.
+export function fullRunnerScene(config,bom,options,build,framesForId){
+ const base={...config,fullRunners:false},scene=build(base,options);
+ const datum=datums[`${config.w}${config.d}-${config.h}`];
+ const drawers=config.drawers||[config.h],starts=[];let start=0;
+ for(const h of drawers){starts.push(start);start+=drawerHeight(h);}
+ const existing=new Set(starts),original=scene.parts.slice();
+ const host=build({...base,drawers:undefined},{...options,open:0});
+ const copies=new Map(bom.rows.map(row=>[row.id,original.filter(p=>p.id===row.id).reduce((n,p)=>Math.max(n,p.copy+1),0)]));
+ for(let slot=0;slot<drawerHeight(config.h);slot++){
+  if(existing.has(slot))continue;
+  const owner=starts.findIndex((s,i)=>slot>=s&&slot<s+drawerHeight(drawers[i]));
+  const sources=owner<0?host.parts:original.filter(p=>!config.drawers||p.drawerSlot===owner||(owner===0&&p.drawerSlot===undefined));
+  const delta=datum.slotAxes[slot]-datum.slotAxes[owner<0?0:starts[owner]],offsets=new Map(copies);
+  for(const source of sources){
+   if(!runnerRoles.has(source.role))continue;
+   const copy=offsets.get(source.id)+source.copy%2;
+   const p={...source,copy,position:source.position.map((v,j)=>v+(j===2?delta:0)),move:source.move.slice()};
+   p.key=`${config.id||'current'}:${p.id}:${copy}:${p.component}`;
+   const saved=config.colors?.[p.key]||config.colors?.[`${p.id}:${copy}:${p.component}`];
+   if(/^#[0-9a-f]{6}$/i.test(saved||''))p.color=[1,3,5].map(i=>parseInt(saved.slice(i,i+2),16)/255);
+   if(owner<0){delete p.drawerSlot;p.operates=false;}
+   scene.parts.push(p);
+   copies.set(p.id,Math.max(copies.get(p.id),copy+1));
+  }
+ }
+ for(const part of scene.parts)part.rowIndex=bom.rows.findIndex(row=>row.id===part.id);
+ scene.bom=bom;scene.hardware=bom.hardware;
+ scene.audit=bom.rows.map(row=>{
+  const parts=scene.parts.filter(p=>p.id===row.id),expected=row.qty*framesForId(row.id).length;
+  return {...scene.audit.find(a=>a.id===row.id),id:row.id,copies:row.qty,expected,represented:parts.length,inferred:parts.filter(p=>p.evidence==='inferred').length,unplaced:parts.filter(p=>p.evidence==='unplaced').length};
+ });
+ scene.quantityComplete=bom.complete&&scene.audit.every(a=>a.expected===a.represented);
+ return scene;
+}
 
 // Only rigid translation of source-calibrated parts. Slot axes are measured
 // source features, distinct from the outside stacking planes of a whole frame.

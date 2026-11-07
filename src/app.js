@@ -48,6 +48,7 @@ function renderFields(){const c=unit().config,o=optionsObject();$('kind').value=
     if(c.kind==='drawer'){
       html+=field('drawer-layout','框内抽屉 · 从下到上',(c.drawers||[c.h]).join('+'),drawerLayouts(c.h).map(parts=>[parts.join('+'),drawerLayoutLabel(parts,c.h)]));
       html+='<p class="muted">多个抽屉共用一个外框；导轨、止挡、钥匙与弹簧按每个抽屉自动配齐。</p>';
+      html+=field('fullRunners','满滑轨 · 配齐所有层位',c.fullRunners,null,'checkbox')+'<p class="muted">按外框每个 1F 层位配齐左右导向件、滑动件和止挡，包含顶部空余层位；不增加抽屉盒或齿条。</p>';
       html+=field('key','钥匙机构',c.key,[['standard','旋转钥匙'],['hidden','隐藏钥匙']]);
       html+=field('roof','顶部用途',c.roof,[['none','继续堆叠 · 无顶盖'],['Grid Roof','网格顶盖'],['Table Roof','平顶盖'],['Bowl Roof','托盘顶盖'],['Under Table Mount Roof','桌下安装'],['Heawyweight Roof','重载顶盖']]);
       html+=field('rails','齿条 · 配合钥匙齿轮锁止',c.rails,null,'checkbox')+'<p class="muted">默认配齐上下齿条。一份 STL 包含一对，与左右滑轨不同。</p>';
